@@ -4,7 +4,7 @@ const componentController = require('../controllers/componentController');
 const authenticateToken = require('../middlewares/authMiddlewares');
 
 // Catégories
-router.get('/categories', componentController.getCategories);
+router.get('/conf', componentController.getCategories);
 router.get('/categories/:id', componentController.getComponentsByCategory);
 
 // Composants

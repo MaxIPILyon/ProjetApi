@@ -35,8 +35,8 @@ module.exports.getComponentById = async (req, res) => {
 
 module.exports.createConfig = async (req, res) => {
     try {
-        let component = new config(req.body);
-        component = await componentService.createComponent(component);
+        let config = new Config(req.body);
+        config = await config.createComponent(component);
         return res.status(201).json({ status: 201, data: component, message: "Successfully Component Created" });
     }
     catch (e) {
