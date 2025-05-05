@@ -18,5 +18,21 @@ module.exports.createPartenaires = async (partenaires) => {
     }
 };
 
+module.exports.updatePartenaires = async (query, data) => {
+    try {
+        return await Partenaires.updateOne(query, data);
+    } catch (e) {
+        throw Error('Error while updating Partenaires: ' + e);
+    }
+};
+
+module.exports.deletePartenaires = async (query) => {
+    try {
+        return await Partenaires.deleteOne(query);
+    } catch (e) {
+        throw Error('Error while deleting Partenaires: ' + e);
+    }
+};
+
 // Partenaires , partenaires
 
