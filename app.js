@@ -57,3 +57,6 @@ app.use('/api', verifyToken);
 
 const categoryRoutes = require('./routes/categoryRoutes');
 app.use('/api', categoryRoutes);
+
+const componentRoutes = require('./routes/componentRoutes');
+app.use('/api', componentRoutes);

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const componentController = require('../controllers/componentController');
-const { authenticateToken } = require('../middlewares/authMiddlewares');
+const authenticateToken = require('../middlewares/authMiddlewares');
 
 // Catégories
 router.get('/categories', componentController.getCategories);
