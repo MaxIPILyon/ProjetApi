@@ -6,6 +6,10 @@ const User = require ("./models/user");
 // const userApiService = require('./services/userApiService');
 const userApiRoute = require ("./routes/userApiRoute");
 const userAuthRoutes = require("./routes/userAuthRoutes");
+const partenairesRoutes = require('./routes/partenairesRoutes');
+const componentRoutes = require('./routes/componentRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+const cors = require('cors');
 const verifyToken = require('./middlewares/authMiddlewares');
 
 
@@ -55,11 +59,11 @@ app.use("/auth", userAuthRoutes);
 // routes protégées
 app.use('/api', verifyToken);
 
-const categoryRoutes = require('./routes/categoryRoutes');
 app.use('/api', categoryRoutes);
 
-const componentRoutes = require('./routes/componentRoutes');
 app.use('/api', componentRoutes);
 
-const partenairesRoutes = require('./routes/partenairesRoutes');
 app.use('/api', partenairesRoutes);
+
+app.use(cors());
+
