@@ -16,7 +16,7 @@ dotenv.config();
 
 mongoose.connect(process.env.MONGO_CONNECTION)
         .then(() =>console.log('Connexion à MongoDB réussie !'))
-        .catch(() =>console.log('Connexion à MongoDB échouée !' + e));
+        .catch((e) =>console.log('Connexion à MongoDB échouée !' + e));
 
 
 // permet de récuprer les données dans le body au format JSON
