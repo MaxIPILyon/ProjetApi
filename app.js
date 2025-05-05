@@ -54,3 +54,6 @@ app.use("/auth", userAuthRoutes);
 
 // routes protégées
 app.use('/api', verifyToken);
+
+const categoryRoutes = require('./routes/categoryRoutes');
+app.use('/api', categoryRoutes);

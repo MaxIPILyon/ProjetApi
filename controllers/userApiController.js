@@ -28,10 +28,6 @@ module.exports.createUser = async (req, res) => {
         let salt = await bcrypt.genSalt(10);
         req.body.password = await bcrypt.hash(req.body.password, salt);
         
-                // req.body.password = crypto.createHmac("sha512", process.env.SECRET_KEY)
-                // .update(req.body.password)
-                // .digest("base64");
-        
                 let user = new User(req.body);
         
                 user = await userApiService.createUser(user)
