@@ -60,3 +60,6 @@ app.use('/api', categoryRoutes);
 
 const componentRoutes = require('./routes/componentRoutes');
 app.use('/api', componentRoutes);
+
+const partenairesRoutes = require('./routes/partenairesRoutes');
+app.use('/api', partenairesRoutes);
