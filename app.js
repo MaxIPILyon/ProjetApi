@@ -11,10 +11,15 @@ const componentRoutes = require('./routes/componentRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const cors = require('cors');
 const verifyToken = require('./middlewares/authMiddlewares');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swaggerConf'); // Chemin d'accès au fichier de définition de swagger
+
 
 const path = require('path');
 
 const app = express();
+
+const PORT = process.env.PORT || 8090;
 
 //charge le fichier de configuration
 dotenv.config();
@@ -49,6 +54,7 @@ app.use("/api/user", userApiRoute);
 
 app.listen(8090, () => {
      console.log('Le serveur est démarré sur le port 8090 !');
+     console.log(`La documentation de l'API est disponible à l'adresse suivante http://localhost:${PORT}/api-docs`);
 });
 
 // app.get('/', (req, res) => {
@@ -77,4 +83,10 @@ app.use(cors());
 
 app.use(express.static('public'));
 
+// Servir l'interface utilisateur Swagger à un itinéraire spécifique
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// ... vos routes API
+app.get('/api/status', (req, res) => {
+     res.json({ message: 'L API est en cours d exécution' });
+   });
