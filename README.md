@@ -35,4 +35,5 @@ Ce projet est une API REST développée avec **Node.js** et **Express.js** dans 
    ## 🔧 check liste
 
    1. Ajoutée un bouton retour.
+   2. listée les composent 
    
