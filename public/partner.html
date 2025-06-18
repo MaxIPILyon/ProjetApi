@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestion des Partenaires</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f9f9f9;
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input {
+      padding: 8px;
+      flex: 1;
+    }
+    button {
+      padding: 8px 12px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: white;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .actions button {
+      margin-left: 5px;
+      background: #e67e22;
+    }
+    .actions .delete {
+      background: #e74c3c;
+    }
+    #message {
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Gestion des Partenaires</h1>
+
+  <div id="message"></div>
+
+  <form id="form">
+    <input type="text" id="name" placeholder="Nom du partenaire" required />
+    <input type="hidden" id="partnerId" />
+    <button type="submit">Ajouter / Modifier</button>
+  </form>
+
+  <ul id="list"></ul>
+
+  <script>
+    const list = document.getElementById('list');
+    const form = document.getElementById('form');
+    const nameInput = document.getElementById('name');
+    const partnerIdInput = document.getElementById('partnerId');
+    const message = document.getElementById('message');
+
+    function showMessage(text, type = 'success') {
+      message.style.color = type === 'success' ? 'green' : 'red';
+      message.textContent = text;
+      setTimeout(() => message.textContent = '', 3000);
+    }
+
+    function getTokenFromCookie() {
+      const match = document.cookie.match(/(^| )token=([^;]+)/);
+      return match ? match[2] : null;
+    }
+
+    async function authFetch(url, options = {}) {
+      const token = getTokenFromCookie();
+      options.headers = options.headers || {};
+      if (token) {
+        options.headers['Authorization'] = `Bearer ${token}`;
+      }
+      return fetch(url, options);
+    }
+
+    async function loadPartenaires() {
+      const res = await authFetch('/api/partenaires');
+      const data = await res.json();
+      if (res.ok) {
+        list.innerHTML = '';
+        data.data.forEach(p => {
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <span>${p.name}</span>
+            <div class="actions">
+              <button onclick="edit('${p._id}', '${p.name}')">Modifier</button>
+              <button class="delete" onclick="remove('${p._id}')">Supprimer</button>
+            </div>
+          `;
+          list.appendChild(li);
+        });
+      } else {
+        showMessage("Erreur de chargement", "error");
+      }
+    }
+
+    async function remove(id) {
+      if (!confirm('Supprimer ce partenaire ?')) return;
+      const res = await authFetch(`/api/partenaires/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        showMessage("Partenaire supprimé");
+        loadPartenaires();
+      } else {
+        const data = await res.json();
+        showMessage("Erreur: " + (data.message || 'inconnue'), 'error');
+      }
+    }
+
+    function edit(id, name) {
+      nameInput.value = name;
+      partnerIdInput.value = id;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = nameInput.value.trim();
+      const id = partnerIdInput.value;
+
+      if (!name) return;
+
+      const payload = JSON.stringify({ name });
+      const headers = { 'Content-Type': 'application/json' };
+      let res;
+
+      if (id) {
+        res = await authFetch(`/api/partenaires/${id}`, {
+          method: 'PUT',
+          headers,
+          body: payload
+        });
+      } else {
+        res = await authFetch('/api/partenaires', {
+          method: 'POST',
+          headers,
+          body: payload
+        });
+      }
+
+      const data = await res.json();
+      if (res.ok) {
+        showMessage(data.message || 'Opération réussie');
+        form.reset();
+        loadPartenaires();
+      } else {
+        showMessage(data.message || 'Erreur', 'error');
+      }
+    });
+
+    loadPartenaires();
+  </script>
+
+</body>
+</html>
