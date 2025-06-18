@@ -12,6 +12,7 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const cors = require('cors');
 const verifyToken = require('./middlewares/authMiddlewares');
 
+const path = require('path');
 
 const app = express();
 
@@ -45,19 +46,26 @@ app.use("/api/user", userApiRoute);
 //      .catch((error)=>console.log(error));
 
 // http://localhost:8090
-app.get('/', (req, res) => {
-     res.send('Accueil'); 
-});
 
 app.listen(8090, () => {
      console.log('Le serveur est démarré sur le port 8090 !');
 });
 
+// app.get('/', (req, res) => {
+//      res.send('index.html'); 
+// });
+
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+
 // routes pour l'authentification
 app.use("/auth", userAuthRoutes);
 
 // routes protégées
-app.use('/api', verifyToken);
+// app.use('/api', verifyToken);
 
 app.use('/api', categoryRoutes);
 
@@ -66,4 +74,7 @@ app.use('/api', componentRoutes);
 app.use('/api', partenairesRoutes);
 
 app.use(cors());
+
+app.use(express.static('public'));
+
 

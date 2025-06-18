@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Authentification Utilisateur</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    form {
+      background-color: #ffffff20;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00000033;
+      width: 300px;
+      margin-bottom: 30px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    #result {
+      padding: 15px;
+      border-radius: 10px;
+      width: 300px;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .success {
+      background-color: #2ecc71;
+      color: #fff;
+    }
+
+    .error {
+      background-color: #e74c3c;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <h1>👤 Connexion & Inscription</h1>
+
+  <!-- Login Form -->
+  <form id="loginForm">
+    <h2>Connexion</h2>
+    <input type="text" id="loginUsername" placeholder="Nom d'utilisateur" required />
+    <input type="password" id="loginPassword" placeholder="Mot de passe" required />
+    <button type="submit">Se connecter</button>
+  </form>
+
+  <!-- Register Form -->
+  <form id="registerForm">
+    <h2>Inscription</h2>
+    <input type="text" id="registerUsername" placeholder="Nom d'utilisateur" required />
+    <input type="password" id="registerPassword" placeholder="Mot de passe" required />
+    <button type="submit">S'inscrire</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    const result = document.getElementById("result");
+
+    function showMessage(message, type = "success") {
+      result.textContent = message;
+      result.className = type;
+    }
+
+    // Stocke le token dans les cookies
+    function saveTokenToCookie(token) {
+      document.cookie = `token=${token}; path=/; max-age=3600; SameSite=Lax`;
+    }
+
+    // Connexion
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("loginUsername").value;
+      const password = document.getElementById("loginPassword").value;
+
+      const res = await fetch("/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        saveTokenToCookie(data.token);
+        showMessage("✅ Connexion réussie ! Token enregistré dans les cookies.", "success");
+      } else {
+        showMessage("❌ Erreur de connexion : " + (data.error || data.message), "error");
+      }
+    });
+
+    // Inscription
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("registerUsername").value;
+      const password = document.getElementById("registerPassword").value;
+
+      const res = await fetch("/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        showMessage("✅ Inscription réussie ! Vous pouvez maintenant vous connecter.", "success");
+      } else {
+        showMessage("❌ Erreur d'inscription : " + (data.error || data.message), "error");
+      }
+    });
+  </script>
+</body>
+</html>
