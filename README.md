@@ -22,3 +22,13 @@ Ce projet est une API REST développée avec **Node.js** et **Express.js** dans 
    ```bash
    git clone https://github.com/votre-utilisateur/expressjs-tp.git
    cd expressjs-tp
+   ```
+2. Installer les dépendances :
+   ```
+   npm i
+   ```
+4. Lancer le projet
+   ```
+   node app.js
+   ```
+   
