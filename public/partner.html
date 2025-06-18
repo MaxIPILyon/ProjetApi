@@ -6,8 +6,8 @@
   <style>
     body {
       font-family: sans-serif;
-      background: #f9f9f9;
-      max-width: 800px;
+      background: #f2f2f2;
+      max-width: 900px;
       margin: auto;
       padding: 20px;
     }
@@ -15,16 +15,19 @@
       text-align: center;
     }
     form {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
       margin-bottom: 20px;
     }
     input {
       padding: 8px;
-      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 5px;
     }
     button {
-      padding: 8px 12px;
+      grid-column: span 2;
+      padding: 10px;
       background: #3498db;
       color: white;
       border: none;
@@ -50,6 +53,11 @@
     .actions button {
       margin-left: 5px;
       background: #e67e22;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 10px;
+      cursor: pointer;
     }
     .actions .delete {
       background: #e74c3c;
@@ -68,7 +76,10 @@
   <div id="message"></div>
 
   <form id="form">
-    <input type="text" id="name" placeholder="Nom du partenaire" required />
+    <input type="text" id="nomDuSite" placeholder="Nom du site" required />
+    <input type="text" id="url" placeholder="URL du site" required />
+    <input type="text" id="idSychornisation" placeholder="ID de synchronisation" required />
+    <input type="text" id="conditionsAffiliation" placeholder="Conditions d'affiliation" required />
     <input type="hidden" id="partnerId" />
     <button type="submit">Ajouter / Modifier</button>
   </form>
@@ -78,7 +89,10 @@
   <script>
     const list = document.getElementById('list');
     const form = document.getElementById('form');
-    const nameInput = document.getElementById('name');
+    const nomDuSiteInput = document.getElementById('nomDuSite');
+    const urlInput = document.getElementById('url');
+    const idSyncInput = document.getElementById('idSychornisation');
+    const conditionsInput = document.getElementById('conditionsAffiliation');
     const partnerIdInput = document.getElementById('partnerId');
     const message = document.getElementById('message');
 
@@ -110,9 +124,9 @@
         data.data.forEach(p => {
           const li = document.createElement('li');
           li.innerHTML = `
-            <span>${p.name}</span>
+            <span><strong>${p.nomDuSite}</strong> - ${p.url}</span>
             <div class="actions">
-              <button onclick="edit('${p._id}', '${p.name}')">Modifier</button>
+              <button onclick='edit(${JSON.stringify(p)})'>Modifier</button>
               <button class="delete" onclick="remove('${p._id}')">Supprimer</button>
             </div>
           `;
@@ -135,22 +149,29 @@
       }
     }
 
-    function edit(id, name) {
-      nameInput.value = name;
-      partnerIdInput.value = id;
+    function edit(p) {
+      partnerIdInput.value = p._id;
+      nomDuSiteInput.value = p.nomDuSite;
+      urlInput.value = p.url;
+      idSyncInput.value = p.idSychornisation;
+      conditionsInput.value = p.conditionsAffiliation;
     }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name = nameInput.value.trim();
+
+      const partenaire = {
+        nomDuSite: nomDuSiteInput.value.trim(),
+        url: urlInput.value.trim(),
+        idSychornisation: idSyncInput.value.trim(),
+        conditionsAffiliation: conditionsInput.value.trim()
+      };
+
       const id = partnerIdInput.value;
-
-      if (!name) return;
-
-      const payload = JSON.stringify({ name });
+      const payload = JSON.stringify(partenaire);
       const headers = { 'Content-Type': 'application/json' };
-      let res;
 
+      let res;
       if (id) {
         res = await authFetch(`/api/partenaires/${id}`, {
           method: 'PUT',
