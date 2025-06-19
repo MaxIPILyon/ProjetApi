@@ -107,7 +107,7 @@
       const username = document.getElementById("registerUsername").value;
       const password = document.getElementById("registerPassword").value;
 
-      const res = await fetch("/login/register", {
+      const res = await fetch("/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ firstName, lastName, email, username, password })
