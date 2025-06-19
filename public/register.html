@@ -1,4 +1,4 @@
-auth.html
+register.html
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -74,17 +74,16 @@ auth.html
   </style>
 </head>
 <body>
-  <h1>👤 Connexion </h1>
+  <h1>👤 Inscription</h1>
 
-  <!-- Login Form -->
-  <form id="loginForm">
-    <h2>Connexion</h2>
-    <input type="text" id="loginUsername" placeholder="Nom d'utilisateur" required />
-    <input type="password" id="loginPassword" placeholder="Mot de passe" required />
-    <button href="/index.html" type="submit">Se connecter</button>
-    
+  <!-- Register Form -->
+  <form id="registerForm">
+    <h2>Inscription</h2>
+    <input type="text" id="registerUsername" placeholder="Nom d'utilisateur" required />
+    <input type="password" id="registerPassword" placeholder="Mot de passe" required />
+    <button type="submit">S'inscrire</button>
     <p style="text-align:center; font-size: 14px;">
-      <a href="/register.html" style="color: #add8e6;">Nouvelle inscription ? Cliquez ici</a>
+      <a href="/auth.html" style="color: #add8e6;">Se connecter</a>
     </p>
   </form>
 
@@ -98,18 +97,13 @@ auth.html
       result.className = type;
     }
 
-    // Stocke le token dans les cookies
-    function saveTokenToCookie(token) {
-      document.cookie = `token=${token}; path=/; max-age=3600; SameSite=Lax`;
-    }
-
-    // Connexion
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    // Inscription
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const username = document.getElementById("loginUsername").value;
-      const password = document.getElementById("loginPassword").value;
+      const username = document.getElementById("registerUsername").value;
+      const password = document.getElementById("registerPassword").value;
 
-      const res = await fetch("/auth/login", {
+      const res = await fetch("/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })
@@ -117,11 +111,9 @@ auth.html
 
       const data = await res.json();
       if (res.ok) {
-        saveTokenToCookie(data.token);
-        // showMessage("✅ Connexion réussie ! Token enregistré dans les cookies.", "success");
-        window.location.href = "index.html";
+        showMessage("✅ Inscription réussie ! Vous pouvez maintenant vous connecter.", "success");
       } else {
-        showMessage("❌ Erreur de connexion : " + (data.error || data.message), "error");
+        showMessage("❌ Erreur d'inscription : " + (data.error || data.message), "error");
       }
     });
   </script>
