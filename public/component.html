@@ -74,6 +74,12 @@
 
   <div id="message"></div>
 
+<label for="filterCategory">Filtrer par catégorie :</label>
+<select id="filterCategory">
+  <option value="">-- Toutes les catégories --</option>
+</select>
+
+
   <form id="form">
     <input type="text" id="name" placeholder="Nom du composant" required />
     <input type="text" id="brand" placeholder="Marque" required />
@@ -117,21 +123,29 @@
       return fetch(url, options);
     }
 
-    async function loadCategories() {
-      const res = await authFetch('/api/categories');
-      const data = await res.json();
-      if (res.ok) {
-        categorySelect.innerHTML = `<option value="">-- Choisir une catégorie --</option>`;
-        data.data.forEach(c => {
-          const opt = document.createElement('option');
-          opt.value = c._id;
-          opt.textContent = c.name;
-          categorySelect.appendChild(opt);
-        });
-      }
-    }
+async function loadCategories() {
+  const res = await authFetch('/api/categories');
+  const data = await res.json();
+  if (res.ok) {
+    categorySelect.innerHTML = `<option value="">-- Choisir une catégorie --</option>`;
+    filterCategory.innerHTML = `<option value="">-- Toutes les catégories --</option>`;
+    
+    data.data.forEach(c => {
+      const opt1 = document.createElement('option');
+      opt1.value = c._id;
+      opt1.textContent = c.name;
+      categorySelect.appendChild(opt1);
+
+      const opt2 = opt1.cloneNode(true);
+      filterCategory.appendChild(opt2);
+    });
+  }
+}
+
 
 async function loadComponents() {
+  const filterValue = filterCategory.value;
+
   const categoriesRes = await authFetch('/api/categories');
   const categoriesData = await categoriesRes.json();
 
@@ -143,7 +157,8 @@ async function loadComponents() {
   list.innerHTML = ''; // Réinitialiser la liste
 
   for (const category of categoriesData.data) {
-    // Appel à /api/components/category/:id
+    if (filterValue && filterValue !== category._id) continue; // filtre actif
+
     const compRes = await authFetch(`/api/categories/${category._id}/components`);
     const compData = await compRes.json();
 
@@ -180,6 +195,7 @@ async function loadComponents() {
     list.appendChild(div);
   }
 }
+
 
 
     async function remove(id) {
@@ -240,7 +256,7 @@ async function loadComponents() {
         showMessage(data.message || "Erreur", "error");
       }
     });
-
+    filterCategory.addEventListener('change', loadComponents);
     loadCategories();
     loadComponents();
   </script>
