@@ -102,6 +102,12 @@
     <button type="submit">Ajouter / Modifier</button>
   </form>
 
+<div style="display: flex; gap: 10px; margin-bottom: 20px;">
+  <input type="text" id="filterName" placeholder="Filtrer par nom ou prénom" style="flex: 1;" />
+  <input type="text" id="filterEmail" placeholder="Filtrer par email" style="flex: 1;" />
+</div>
+
+
   <ul id="userList"></ul>
 
   <script>
@@ -113,6 +119,9 @@
     const password = document.getElementById("password");
     const userId = document.getElementById("userId");
     const message = document.getElementById("message");
+    const filterName = document.getElementById("filterName");
+    const filterEmail = document.getElementById("filterEmail");
+
 
     const API_URL = "/api/user";
 
@@ -122,27 +131,42 @@
       setTimeout(() => message.textContent = '', 3000);
     }
 
-    async function fetchUsers() {
-      const res = await fetch(`${API_URL}/users`);
-      const data = await res.json();
+async function fetchUsers() {
+  const res = await fetch(`${API_URL}/users`);
+  const data = await res.json();
 
-      if (res.ok) {
-        userList.innerHTML = "";
-        data.data.forEach(user => {
-          const li = document.createElement("li");
-          li.innerHTML = `
-            <span><strong>${user.firstName} ${user.lastName}</strong> — ${user.email}</span>
-            <div class="actions">
-              <button class="edit" onclick='editUser(${JSON.stringify(user)})'>✏️</button>
-              <button class="delete" onclick='deleteUser("${user._id}")'>🗑️</button>
-            </div>
-          `;
-          userList.appendChild(li);
-        });
-      } else {
-        showMessage("Erreur de chargement", "error");
-      }
-    }
+  if (res.ok) {
+    const nameFilter = filterName.value.trim().toLowerCase();
+    const emailFilter = filterEmail.value.trim().toLowerCase();
+
+    userList.innerHTML = "";
+
+    data.data
+      .filter(user => {
+        const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
+        const email = user.email.toLowerCase();
+
+        return (
+          (!nameFilter || fullName.includes(nameFilter)) &&
+          (!emailFilter || email.includes(emailFilter))
+        );
+      })
+      .forEach(user => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <span><strong>${user.firstName} ${user.lastName}</strong> — ${user.email}</span>
+          <div class="actions">
+            <button class="edit" onclick='editUser(${JSON.stringify(user)})'>✏️</button>
+            <button class="delete" onclick='deleteUser("${user._id}")'>🗑️</button>
+          </div>
+        `;
+        userList.appendChild(li);
+      });
+  } else {
+    showMessage("Erreur de chargement", "error");
+  }
+}
+
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -208,6 +232,10 @@
     }
 
     fetchUsers();
+
+    filterName.addEventListener("input", fetchUsers);
+    filterEmail.addEventListener("input", fetchUsers);
+
   </script>
 
 </body>
