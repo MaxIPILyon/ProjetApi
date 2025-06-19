@@ -1,0 +1,17 @@
+[
+  { "name": "CPU" },
+  { "name": "GPU" },
+  { "name": "RAM" },
+  { "name": "Stockage" },
+  { "name": "Carte mère" },
+  { "name": "Boîtier" },
+  { "name": "Alimentation" },
+  { "name": "Refroidissement" },
+  { "name": "Carte son" },
+  { "name": "Lecteur optique" },
+  { "name": "Carte réseau" },
+  { "name": "Écran" },
+  { "name": "Clavier" },
+  { "name": "Souris" },
+  { "name": "Système d'exploitation" }
+]

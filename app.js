@@ -2,7 +2,12 @@ const express = require('express');
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const mongoose = require('mongoose');
+const fs = require('fs'); // fileSystem
+
+// Class model
 const User = require ("./models/user");
+const Category = require ("./models/category");
+
 // const userApiService = require('./services/userApiService');
 const userApiRoute = require ("./routes/userApiRoute");
 const userAuthRoutes = require("./routes/userAuthRoutes");
@@ -11,10 +16,14 @@ const componentRoutes = require('./routes/componentRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const cors = require('cors');
 const verifyToken = require('./middlewares/authMiddlewares');
+
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swaggerConf'); // Chemin d'accès au fichier de définition de swagger
 
 
+
+// Parser le JSON
+const categories = JSON.parse(fs.readFileSync('categories.json', 'utf8'));
 const path = require('path');
 
 const app = express();
@@ -51,6 +60,22 @@ app.use("/api/user", userApiRoute);
 //      .catch((error)=>console.log(error));
 
 // http://localhost:8090
+
+
+// création en bases des catégories par défaut
+categories.forEach(category => {
+  let newcategory = new Category(
+    {
+      name:category.name
+    }
+  )
+
+  newcategory.save()
+});
+
+
+
+
 
 app.listen(8090, () => {
      console.log('Le serveur est démarré sur le port 8090 !');
