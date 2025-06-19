@@ -1,5 +1,3 @@
-register.html
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -79,11 +77,14 @@ register.html
   <!-- Register Form -->
   <form id="registerForm">
     <h2>Inscription</h2>
+    <input type="text" id="firstName" placeholder="Prénom" required />
+    <input type="text" id="lastName" placeholder="Nom" required />
+    <input type="email" id="email" placeholder="Email" required />
     <input type="text" id="registerUsername" placeholder="Nom d'utilisateur" required />
     <input type="password" id="registerPassword" placeholder="Mot de passe" required />
     <button type="submit">S'inscrire</button>
     <p style="text-align:center; font-size: 14px;">
-      <a href="/auth.html" style="color: #add8e6;">Se connecter</a>
+      <a href="/login.html" style="color: #add8e6;">Se connecter</a>
     </p>
   </form>
 
@@ -97,16 +98,19 @@ register.html
       result.className = type;
     }
 
-    // Inscription
     document.getElementById("registerForm").addEventListener("submit", async (e) => {
       e.preventDefault();
+
+      const firstName = document.getElementById("firstName").value;
+      const lastName = document.getElementById("lastName").value;
+      const email = document.getElementById("email").value;
       const username = document.getElementById("registerUsername").value;
       const password = document.getElementById("registerPassword").value;
 
-      const res = await fetch("/auth/register", {
+      const res = await fetch("/login/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ firstName, lastName, email, username, password })
       });
 
       const data = await res.json();

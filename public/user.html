@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestion des Utilisateurs</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      grid-column: span 2;
+      padding: 10px;
+      background: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1f5e89;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: white;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .actions button {
+      margin-left: 5px;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    .edit {
+      background-color: #f39c12;
+      color: white;
+    }
+
+    .delete {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    #message {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Gestion des Utilisateurs</h1>
+
+  <div id="message"></div>
+
+  <form id="form">
+    <input type="text" id="firstName" placeholder="Prénom" required />
+    <input type="text" id="lastName" placeholder="Nom" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Mot de passe" required />
+    <input type="hidden" id="userId" />
+    <button type="submit">Ajouter / Modifier</button>
+  </form>
+
+  <ul id="userList"></ul>
+
+  <script>
+    const userList = document.getElementById("userList");
+    const form = document.getElementById("form");
+    const firstName = document.getElementById("firstName");
+    const lastName = document.getElementById("lastName");
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+    const userId = document.getElementById("userId");
+    const message = document.getElementById("message");
+
+    const API_URL = "/api/user";
+
+    function showMessage(text, type = 'success') {
+      message.style.color = type === 'success' ? 'green' : 'red';
+      message.textContent = text;
+      setTimeout(() => message.textContent = '', 3000);
+    }
+
+    async function fetchUsers() {
+      const res = await fetch(`${API_URL}/users`);
+      const data = await res.json();
+
+      if (res.ok) {
+        userList.innerHTML = "";
+        data.data.forEach(user => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+            <span><strong>${user.firstName} ${user.lastName}</strong> — ${user.email}</span>
+            <div class="actions">
+              <button class="edit" onclick='editUser(${JSON.stringify(user)})'>✏️</button>
+              <button class="delete" onclick='deleteUser("${user._id}")'>🗑️</button>
+            </div>
+          `;
+          userList.appendChild(li);
+        });
+      } else {
+        showMessage("Erreur de chargement", "error");
+      }
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const body = {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        email: email.value,
+        password: password.value
+      };
+
+      const id = userId.value;
+      let res;
+
+      if (id) {
+        res = await fetch(`${API_URL}/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+      } else {
+        res = await fetch(`${API_URL}/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+      }
+
+      const data = await res.json();
+
+      if (res.ok) {
+        showMessage(data.message || "Succès");
+        form.reset();
+        fetchUsers();
+      } else {
+        showMessage(data.message || "Erreur", "error");
+      }
+    });
+
+    function editUser(user) {
+      userId.value = user._id;
+      firstName.value = user.firstName;
+      lastName.value = user.lastName;
+      email.value = user.email;
+      password.value = "";
+    }
+
+    async function deleteUser(id) {
+      if (!confirm("Supprimer cet utilisateur ?")) return;
+
+      const res = await fetch(`${API_URL}/${id}`, {
+        method: "DELETE"
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        showMessage("Utilisateur supprimé");
+        fetchUsers();
+      } else {
+        showMessage(data.message || "Erreur", "error");
+      }
+    }
+
+    fetchUsers();
+  </script>
+
+</body>
+</html>

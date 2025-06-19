@@ -1,6 +1,5 @@
 const User = require ("../models/user");
-const userApiService = require("../services/userApiService");
-const crypto = require("crypto");
+const userApiService = require("../services/userService");
 const bcrypt = require("bcrypt");
 
 module.exports.getUsers = async (req, res) => {
