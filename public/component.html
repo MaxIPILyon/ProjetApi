@@ -167,7 +167,7 @@ async function loadComponents() {
       compData.data.forEach(c => {
         const li = document.createElement('li');
         li.innerHTML = `
-          <span><strong>${c.name}</strong> (${c.brand}) - ${c.price}€</span>
+          <span><strong>${c.title}</strong> (${c.brand}) - ${c.price}€</span>
           <div class="actions">
             <button onclick='edit(${JSON.stringify(c)})'>Modifier</button>
             <button class="delete" onclick="remove('${c._id}')">Supprimer</button>
@@ -206,7 +206,7 @@ async function loadComponents() {
       e.preventDefault();
 
       const composant = {
-        name: nameInput.value.trim(),
+        title: nameInput.value.trim(),
         brand: brandInput.value.trim(),
         price: parseFloat(priceInput.value.trim()),
         category: categorySelect.value
