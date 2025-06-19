@@ -14,6 +14,7 @@ const userAuthRoutes = require("./routes/userAuthRoutes");
 const partenairesRoutes = require('./routes/partenairesRoutes');
 const componentRoutes = require('./routes/componentRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
+const configRoutes = require('./routes/configRoutes');
 const cors = require('cors');
 const verifyToken = require('./middlewares/authMiddlewares');
 
@@ -122,6 +123,8 @@ app.use('/api', categoryRoutes);
 app.use('/api', componentRoutes);
 
 app.use('/api', partenairesRoutes);
+
+app.use('/api', configRoutes);
 
 app.use(cors());
 
