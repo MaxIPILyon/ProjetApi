@@ -63,18 +63,37 @@ app.use("/api/user", userApiRoute);
 
 
 // création en bases des catégories par défaut
-categories.forEach(category => {
-  let newcategory = new Category(
-    {
-      name:category.name
+// categories.forEach(category => {
+
+// const exists = Category.findOne({ name: category.name });
+//   if (!exists)
+
+//   let newcategory = new Category(
+//     {
+//       name:category.name
+//     }
+//   )
+
+//   newcategory.save()
+// });
+
+
+
+
+Category.countDocuments()
+  .then(count => {
+    if (count === 0) {
+      const rawData = fs.readFileSync('./categories.json', 'utf8');
+      const categories = JSON.parse(rawData);
+
+      Category.insertMany(categories)
+        .then(() => console.log('Catégories par défaut insérées'))
+        .catch(err => console.error('Erreur insertMany :', err));
+    } else {
+      console.log('Catégories déjà présentes');
     }
-  )
-
-  newcategory.save()
-});
-
-
-
+  })
+  .catch(err => console.error('Erreur countDocuments :', err));
 
 
 app.listen(8090, () => {
