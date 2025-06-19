@@ -131,26 +131,56 @@
       }
     }
 
-    async function loadComponents() {
-      const res = await authFetch('/api/components');
-      const data = await res.json();
-      if (res.ok) {
-        list.innerHTML = '';
-        data.data.forEach(c => {
-          const li = document.createElement('li');
-          li.innerHTML = `
-            <span><strong>${c.name}</strong> (${c.brand}) - ${c.price}€</span>
-            <div class="actions">
-              <button onclick='edit(${JSON.stringify(c)})'>Modifier</button>
-              <button class="delete" onclick="remove('${c._id}')">Supprimer</button>
-            </div>
-          `;
-          list.appendChild(li);
-        });
-      } else {
-        showMessage("Erreur de chargement", "error");
-      }
+async function loadComponents() {
+  const categoriesRes = await authFetch('/api/categories');
+  const categoriesData = await categoriesRes.json();
+
+  if (!categoriesRes.ok) {
+    showMessage("Erreur de chargement des catégories", "error");
+    return;
+  }
+
+  list.innerHTML = ''; // Réinitialiser la liste
+
+  for (const category of categoriesData.data) {
+    // Appel à /api/components/category/:id
+    const compRes = await authFetch(`/api/categories/${category._id}/components`);
+    const compData = await compRes.json();
+
+    if (!compRes.ok) {
+      showMessage(`Erreur pour ${category.name}`, "error");
+      continue;
     }
+
+    const div = document.createElement('div');
+    div.style.marginBottom = '30px';
+    div.innerHTML = `
+      <h2>${category.name}</h2>
+      <ul class="category-list"></ul>
+    `;
+
+    const ul = div.querySelector('ul');
+
+    if (compData.data.length === 0) {
+      ul.innerHTML = '<li>Aucun composant dans cette catégorie.</li>';
+    } else {
+      compData.data.forEach(c => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span><strong>${c.name}</strong> (${c.brand}) - ${c.price}€</span>
+          <div class="actions">
+            <button onclick='edit(${JSON.stringify(c)})'>Modifier</button>
+            <button class="delete" onclick="remove('${c._id}')">Supprimer</button>
+          </div>
+        `;
+        ul.appendChild(li);
+      });
+    }
+
+    list.appendChild(div);
+  }
+}
+
 
     async function remove(id) {
       if (!confirm('Supprimer ce composant ?')) return;

@@ -115,7 +115,7 @@ app.get('/', (req, res) => {
 app.use("/auth", userAuthRoutes);
 
 // routes protégées
-// app.use('/api', verifyToken);
+app.use('/api', verifyToken);
 
 app.use('/api', categoryRoutes);
 
@@ -132,5 +132,5 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // ... vos routes API
 app.get('/api/status', (req, res) => {
-     res.json({ message: 'L API est en cours d exécution' });
+     res.json({ message: 'L API est en cours d\'exécution' });
    });
