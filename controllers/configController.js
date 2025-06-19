@@ -1,4 +1,5 @@
 const configurationService = require('../services/configService');
+const Configuration = require('../models/config');
 
 module.exports.getConfigurations = async (req, res) => {
   try {
@@ -60,6 +61,47 @@ module.exports.getConfiguration = async (req, res) => {
       message: "Successfully Configuration Retrieved"
     });
 
+  } catch (e) {
+    return res.status(400).json({ status: 400, message: e.message });
+  }
+};
+
+module.exports.createConfiguration = async (req, res) => {
+  try {
+    const { name, components } = req.body;
+
+    const config = new Configuration({
+      name,
+      components,
+      user: req.userId
+    });
+
+    const created = await configurationService.createConfiguration(config);
+
+    return res.status(201).json({
+      status: 201,
+      data: created,
+      message: "Successfully Configuration Created"
+    });
+
+  } catch (e) {
+    return res.status(400).json({ status: 400, message: e.message });
+  }
+};
+
+module.exports.updateConfiguration = async (req, res) => {
+  try {
+    let data = await configurationService.updateConfiguration({ _id: req.params.id }, req.body);
+    return res.status(200).json({ status: 200, data, message: "Successfully Configuration Updated" });
+  } catch (e) {
+    return res.status(400).json({ status: 400, message: e.message });
+  }
+};
+
+module.exports.deleteConfiguration = async (req, res) => {
+  try {
+    let data = await configurationService.deleteConfiguration({ _id: req.params.id });
+    return res.status(200).json({ status: 200, data, message: "Successfully Configuration Deleted" });
   } catch (e) {
     return res.status(400).json({ status: 400, message: e.message });
   }
