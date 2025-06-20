@@ -34,5 +34,3 @@ module.exports.deletePartenaires = async (query) => {
     }
 };
 
-// Partenaires , partenaires
-
