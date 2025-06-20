@@ -6,9 +6,9 @@
   <title>Créer une configuration</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f4f8;
+      color: #333;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -20,7 +20,6 @@
     }
 
     form {
-      background-color: rgba(255, 255, 255, 0.05);
       padding: 20px 30px;
       border-radius: 10px;
       box-shadow: 0 0 10px #00000033;
@@ -68,6 +67,7 @@
       background-color: rgba(255, 255, 255, 0.05);
       padding: 10px;
       border-radius: 5px;
+      margin-bottom: 15px;
     }
 
     .component-group h3 {
@@ -105,32 +105,30 @@
     }
 
     async function loadComponentsGroupedByCategory() {
-      const res = await authFetch('/api/components');
-      const data = await res.json();
       const container = document.getElementById('component-groups');
+      container.innerHTML = '';
 
-      if (!res.ok) {
-        container.innerHTML = '<p>Erreur de chargement</p>';
+      const resCat = await authFetch('/api/categories');
+      const catData = await resCat.json();
+      if (!resCat.ok) {
+        container.innerHTML = '<p>Erreur de chargement des catégories</p>';
         return;
       }
 
-      const grouped = {};
-      data.data.forEach(c => {
-        const cat = c.category.name || 'Autres';
-        if (!grouped[cat]) grouped[cat] = [];
-        grouped[cat].push(c);
-      });
+      for (const cat of catData.data) {
+        const resComp = await authFetch(`/api/categories/${cat._id}/components`);
+        const compData = await resComp.json();
+        if (!resComp.ok || !Array.isArray(compData.data)) continue;
 
-      Object.entries(grouped).forEach(([catName, comps]) => {
         const section = document.createElement('div');
         section.className = 'component-group';
-        section.innerHTML = `<h3>${catName}</h3>`;
+        section.innerHTML = `<h3>${cat.name}</h3>`;
 
         const select = document.createElement('select');
         select.name = 'components';
         select.multiple = true;
 
-        comps.forEach(c => {
+        compData.data.forEach(c => {
           const opt = document.createElement('option');
           opt.value = c._id;
           opt.textContent = `${c.title} - ${c.price.toFixed(2)}€`;
@@ -139,7 +137,7 @@
 
         section.appendChild(select);
         container.appendChild(section);
-      });
+      }
     }
 
     document.getElementById('configForm').addEventListener('submit', async (e) => {
