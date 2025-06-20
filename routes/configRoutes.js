@@ -6,8 +6,8 @@ const {authenticateToken, isAdmin} = require('../middlewares/authMiddlewares');
 router.get('/configurations', configurationController.getConfigurations);
 router.get('/configurations/:id', configurationController.getConfiguration);
 router.post('/configurations', authenticateToken, configurationController.createConfiguration);
-router.put('/configurations/:id', authenticateToken ,configurationController.updateConfiguration);
-router.delete('/configurations/:id', authenticateToken ,configurationController.deleteConfiguration);
+router.put('/configurations/:id', authenticateToken , isAdmin, configurationController.updateConfiguration);
+router.delete('/configurations/:id', authenticateToken , isAdmin ,configurationController.deleteConfiguration);
 
 module.exports = router;
 

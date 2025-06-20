@@ -6,7 +6,7 @@ const {authenticateToken, isAdmin} = require('../middlewares/authMiddlewares');
 
 router.get('/partenaires', partenairesController.getPartenaires);
 
-router.post('/partenaires', authenticateToken, partenairesController.createPartenaires);
+router.post('/partenaires', authenticateToken, isAdmin, partenairesController.createPartenaires);
 router.put('/partenaires/:id', authenticateToken, isAdmin, partenairesController.updatePartenaires);
 router.delete('/partenaires/:id', authenticateToken, isAdmin, partenairesController.deletePartenaires);
 

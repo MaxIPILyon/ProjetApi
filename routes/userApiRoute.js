@@ -1,13 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const userApiController = require("../controllers/userApiController");
+const { authenticateToken, isAdmin } = require("../middlewares/authMiddlewares");
 
 
-router.route("/users").get(userApiController.getUsers);
-router.route("/:id").get(userApiController.getUser);
-router.route("/").post(userApiController.createUser);
-router.route("/:id").put(userApiController.updateUser);
-router.route("/:id").delete(userApiController.deleteUser);
+// router.route("/users").get(authenticateToken, isAdmin, userApiController.getUsers);
+// router.route("/:id").get(authenticateToken, isAdmin, userApiController.getUser);
+// router.route("/").post(authenticateToken, isAdmin, userApiController.createUser);
+// router.route("/:id").put(authenticateToken, isAdmin, userApiController.updateUser);
+// router.route("/:id").delete(authenticateToken, isAdmin, userApiController.deleteUser);
+
+router.get("/users", userApiController.getUsers);
+router.get("/:id",  userApiController.getUser);
+router.post("/", userApiController.createUser);
+router.put("/:id", userApiController.updateUser);
+router.delete("/:id", userApiController.deleteUser);
+
+
+
 
 module.exports = router;
 
