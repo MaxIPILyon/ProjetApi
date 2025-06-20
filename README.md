@@ -14,14 +14,14 @@ Ce projet est une API REST développée avec **Node.js** et **Express.js** dans 
 
 - [Node.js](https://nodejs.org/) (version recommandée : 18+)
 - npm (installé avec Node)
-- (Optionnel) MongoDB ou autre base de données si utilisée
+- MongoDB
 
 ## 🔧 Installation
 
 1. Cloner le dépôt :
    ```bash
-   git clone https://github.com/votre-utilisateur/expressjs-tp.git
-   cd expressjs-tp
+   git clone https://github.com/MaxIPILyon/ProjetAp
+   cd ProjetApi
    ```
 2. Installer les dépendances :
    ```
@@ -31,9 +31,4 @@ Ce projet est une API REST développée avec **Node.js** et **Express.js** dans 
    ```
    node app.js
    ```
-
-   ## 🔧 check liste
-
-   1. Ajoutée un bouton retour.
-   2. listée les composent 
    
