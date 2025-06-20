@@ -15,7 +15,7 @@ module.exports.login=async(req, res) => {
                 return res.status(401).json({ error:'Authentication failed', data: user});
             }
             // crée et retourne le token
-            const token=jwt.sign({ userId: user._id}, process.env.JWT_SECRET, {
+            const token=jwt.sign({ userId: user._id, admin: user.admin}, process.env.JWT_SECRET, {
                 expiresIn: process.env.JWT_EXPIRATION});
             return res.status(200).json({ token});
         }

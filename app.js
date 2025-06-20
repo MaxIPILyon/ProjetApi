@@ -20,7 +20,7 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const configRoutes = require('./routes/configRoutes');
 
 const cors = require('cors');
-const verifyToken = require('./middlewares/authMiddlewares');
+const {authenticateToken, isAdmin} = require('./middlewares/authMiddlewares');
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swaggerConf'); // Chemin d'accès au fichier de définition de swagger
@@ -102,7 +102,7 @@ app.use("/api/user", userApiRoute);
 app.use("/auth", userAuthRoutes);
 
 // routes protégées
-app.use('/api', verifyToken);
+app.use('/api', authenticateToken);
 
 app.use('/api', categoryRoutes);
 

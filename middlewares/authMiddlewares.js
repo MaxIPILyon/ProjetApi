@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-function verifyToken(req, res, next) {
+function authenticateToken (req, res, next) {
   const jwtHeader = req.header(process.env.JWT_HEADER);
 
   if (!jwtHeader) {
@@ -25,11 +25,22 @@ function verifyToken(req, res, next) {
 
   try {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decodedToken.userId;
+    //req.userId = decodedToken.userId;
+    req.user = {
+        userId: decodedToken.userId,
+        admin: decodedToken.admin
+    };
     next();
   } catch (e) {
     res.status(401).json({ error: 'Invalid token', details: e.message });
   }
 }
 
-module.exports = verifyToken;
+function isAdmin(req, res, next) {
+  if (!req.user || !req.user.admin) {
+    return res.status(403).json({ error: 'Access denied: admin only' });
+  }
+  next();
+}
+
+module.exports = {authenticateToken, isAdmin};
