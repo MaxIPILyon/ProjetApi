@@ -14,19 +14,19 @@ module.exports = router;
 /**
  * @swagger
  * tags:
- *   name: Categories
- *   description: API for managing product categories
+ *   name: Catégories
+ *   description: API pour la gestion des catégories de produits
  */
 
 /**
  * @swagger
  * /api/categories:
  *   get:
- *     summary: Retrieve a list of all categories.
- *     tags: [Categories]
+ *     summary: Récupérer la liste de toutes les catégories.
+ *     tags: [Catégories]
  *     responses:
  *       200:
- *         description: A successful response with a list of categories.
+ *         description: Réponse réussie contenant la liste des catégories.
  *         content:
  *           application/json:
  *             schema:
@@ -34,15 +34,15 @@ module.exports = router;
  *               items:
  *                 $ref: '#/components/schemas/Category'
  *       500:
- *         description: Internal server error.
+ *         description: Erreur interne du serveur.
  */
 
 /**
  * @swagger
  * /api/categories:
  *   post:
- *     summary: Create a new category (admin only).
- *     tags: [Categories]
+ *     summary: Créer une nouvelle catégorie (administrateur uniquement).
+ *     tags: [Catégories]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -53,17 +53,17 @@ module.exports = router;
  *             $ref: '#/components/schemas/Category'
  *     responses:
  *       201:
- *         description: Category created successfully.
+ *         description: Catégorie créée avec succès.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Category'
  *       400:
- *         description: Bad request – missing or invalid data.
+ *         description: Requête invalide – données manquantes ou incorrectes.
  *       401:
- *         description: Unauthorized – authentication required.
+ *         description: Non autorisé – authentification requise.
  *       500:
- *         description: Internal server error.
+ *         description: Erreur interne du serveur.
  */
 
 /**
@@ -75,12 +75,13 @@ module.exports = router;
  *       required:
  *         - name
  *       properties:
- *         id:
+ *         _id:
  *           type: string
- *           description: The auto-generated ID of the category.
+ *           description: L'identifiant auto-généré de la catégorie (MongoDB ObjectId).
  *           example: 60c72b2f9b1e8b001f8f4b5a
  *         name:
  *           type: string
- *           description: The name of the category.
+ *           description: Le nom de la catégorie (doit être unique).
  *           example: Electronics
  */
+

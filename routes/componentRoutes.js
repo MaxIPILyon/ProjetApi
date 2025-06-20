@@ -21,19 +21,19 @@ module.exports = router;
 /**
  * @swagger
  * tags:
- *   name: Components
- *   description: API for managing components and categories
+ *   name: Composants
+ *   description: API pour gérer les composants et les catégories
  */
 
 /**
  * @swagger
  * /api/categories:
  *   get:
- *     summary: Get all categories
- *     tags: [Components]
+ *     summary: Récupérer toutes les catégories
+ *     tags: [Composants]
  *     responses:
  *       200:
- *         description: List of categories
+ *         description: Liste des catégories
  *         content:
  *           application/json:
  *             schema:
@@ -41,25 +41,25 @@ module.exports = router;
  *               items:
  *                 $ref: '#/components/schemas/Category'
  *       500:
- *         description: Internal server error
+ *         description: Erreur interne du serveur
  */
 
 /**
  * @swagger
- * /api/categories/{id}:
+ * /api/categories/{id}/components:
  *   get:
- *     summary: Get components by category ID
- *     tags: [Components]
+ *     summary: Récupérer les composants d'une catégorie par ID
+ *     tags: [Composants]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: Category ID
+ *         description: ID de la catégorie
  *     responses:
  *       200:
- *         description: List of components in the category
+ *         description: Liste des composants de la catégorie
  *         content:
  *           application/json:
  *             schema:
@@ -67,43 +67,43 @@ module.exports = router;
  *               items:
  *                 $ref: '#/components/schemas/Component'
  *       404:
- *         description: Category not found
+ *         description: Catégorie non trouvée
  *       500:
- *         description: Internal server error
+ *         description: Erreur interne du serveur
  */
 
 /**
  * @swagger
  * /api/components/{id}:
  *   get:
- *     summary: Get component by ID
- *     tags: [Components]
+ *     summary: Récupérer un composant par ID
+ *     tags: [Composants]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: Component ID
+ *         description: ID du composant
  *     responses:
  *       200:
- *         description: Component details
+ *         description: Détails du composant
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Component'
  *       404:
- *         description: Component not found
+ *         description: Composant non trouvé
  *       500:
- *         description: Internal server error
+ *         description: Erreur interne du serveur
  */
 
 /**
  * @swagger
  * /api/components:
  *   post:
- *     summary: Create a new component
- *     tags: [Components]
+ *     summary: Créer un nouveau composant
+ *     tags: [Composants]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -114,21 +114,21 @@ module.exports = router;
  *             $ref: '#/components/schemas/Component'
  *     responses:
  *       201:
- *         description: Component created successfully
+ *         description: Composant créé avec succès
  *       400:
- *         description: Bad request
+ *         description: Requête invalide
  *       401:
- *         description: Unauthorized
+ *         description: Non autorisé
  *       500:
- *         description: Internal server error
+ *         description: Erreur interne du serveur
  */
 
 /**
  * @swagger
  * /api/components/{id}:
  *   put:
- *     summary: Update a component by ID
- *     tags: [Components]
+ *     summary: Mettre à jour un composant par ID
+ *     tags: [Composants]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -137,7 +137,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: Component ID
+ *         description: ID du composant
  *     requestBody:
  *       required: true
  *       content:
@@ -146,23 +146,23 @@ module.exports = router;
  *             $ref: '#/components/schemas/Component'
  *     responses:
  *       200:
- *         description: Component updated successfully
+ *         description: Composant mis à jour avec succès
  *       400:
- *         description: Bad request
+ *         description: Requête invalide
  *       401:
- *         description: Unauthorized
+ *         description: Non autorisé
  *       404:
- *         description: Component not found
+ *         description: Composant non trouvé
  *       500:
- *         description: Internal server error
+ *         description: Erreur interne du serveur
  */
 
 /**
  * @swagger
  * /api/components/{id}:
  *   delete:
- *     summary: Delete a component by ID
- *     tags: [Components]
+ *     summary: Supprimer un composant par ID
+ *     tags: [Composants]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -171,17 +171,18 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: Component ID
+ *         description: ID du composant
  *     responses:
  *       200:
- *         description: Component deleted successfully
+ *         description: Composant supprimé avec succès
  *       401:
- *         description: Unauthorized
+ *         description: Non autorisé
  *       404:
- *         description: Component not found
+ *         description: Composant non trouvé
  *       500:
- *         description: Internal server error
+ *         description: Erreur interne du serveur
  */
+
 
 /**
  * @swagger
@@ -195,46 +196,52 @@ module.exports = router;
  *       properties:
  *         id:
  *           type: string
- *           description: Unique identifier of the category
+ *           description: Identifiant unique de la catégorie
  *           example: "64a3fe2d5baf1a001c8df123"
  *         name:
  *           type: string
- *           description: Name of the category
- *           example: "Microcontrollers"
+ *           description: Nom de la catégorie
+ *           example: "Microcontrôleurs"
  *         description:
  *           type: string
- *           description: Optional description of the category
- *           example: "All types of programmable microcontrollers."
+ *           description: Description optionnelle de la catégorie
+ *           example: "Tous types de microcontrôleurs programmables."
 
  *     Component:
  *       type: object
  *       required:
- *         - id
- *         - name
- *         - categoryId
+ *         - category
+ *         - title
+ *         - price
  *       properties:
  *         id:
  *           type: string
- *           description: Unique identifier of the component
+ *           description: Identifiant unique du composant
  *           example: "64a3fe2d5baf1a001c8df456"
- *         name:
+ *         category:
  *           type: string
- *           description: Name of the component
- *           example: "ESP32"
- *         categoryId:
- *           type: string
- *           description: ID of the category this component belongs to
+ *           description: ID de la catégorie à laquelle appartient ce composant
  *           example: "64a3fe2d5baf1a001c8df123"
- *         specs:
- *           type: object
- *           description: Technical specifications of the component
- *           additionalProperties: true
- *           example:
- *             frequency: "240 MHz"
- *             cores: 2
- *             wifi: true
- *         description:
+ *         brand:
  *           type: string
- *           description: Optional description of the component
- *           example: "A low-cost, low-power system on a chip with Wi-Fi and Bluetooth."
+ *           description: Marque du composant
+ *           example: "Espressif"
+ *         title:
+ *           type: string
+ *           description: Titre ou nom du composant
+ *           example: "ESP32-WROOM-32"
+ *         specs:
+ *           type: string
+ *           description: Spécifications techniques du composant (au format texte)
+ *           example: "Dual-core, 240 MHz, Wi-Fi, Bluetooth"
+ *         price:
+ *           type: number
+ *           format: float
+ *           description: Prix du composant en euros
+ *           example: 12.99
+ *         imageUrl:
+ *           type: string
+ *           description: URL de l'image du composant
+ *           example: "https://example.com/images/esp32.jpg"
  */
+

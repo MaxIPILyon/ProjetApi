@@ -12,8 +12,8 @@ module.exports = router;
  * @swagger
  * /api/auth/register:
  *   post:
- *     summary: Register a new user.
- *     tags: [Auth]
+ *     summary: Enregistrer un nouvel utilisateur.
+ *     tags: [Authentification]
  *     requestBody:
  *       required: true
  *       content:
@@ -22,19 +22,19 @@ module.exports = router;
  *             $ref: '#/components/schemas/RegisterInput'
  *     responses:
  *       201:
- *         description: User successfully registered.
+ *         description: Utilisateur enregistré avec succès.
  *       400:
- *         description: Invalid input data.
+ *         description: Données d'entrée invalides.
  *       500:
- *         description: Internal server error.
+ *         description: Erreur interne du serveur.
  */
 
 /**
  * @swagger
  * /api/auth/login:
  *   post:
- *     summary: Login a user and return a token.
- *     tags: [Auth]
+ *     summary: Authentifier un utilisateur et retourner un jeton.
+ *     tags: [Authentification]
  *     requestBody:
  *       required: true
  *       content:
@@ -43,7 +43,7 @@ module.exports = router;
  *             $ref: '#/components/schemas/LoginInput'
  *     responses:
  *       200:
- *         description: Successfully authenticated.
+ *         description: Authentification réussie.
  *         content:
  *           application/json:
  *             schema:
@@ -52,9 +52,9 @@ module.exports = router;
  *                 token:
  *                   type: string
  *       401:
- *         description: Invalid credentials.
+ *         description: Identifiants invalides.
  *       500:
- *         description: Internal server error.
+ *         description: Erreur interne du serveur.
  */
 
 /**
@@ -64,17 +64,34 @@ module.exports = router;
  *     RegisterInput:
  *       type: object
  *       required:
+ *         - firstName
+ *         - lastName
  *         - email
+ *         - username
  *         - password
  *       properties:
+ *         firstName:
+ *           type: string
+ *           example: Jean
+ *         lastName:
+ *           type: string
+ *           example: Dupont
  *         email:
  *           type: string
  *           format: email
- *           example: user@example.com
+ *           example: utilisateur@exemple.com
+ *         username:
+ *           type: string
+ *           example: jean_d
  *         password:
  *           type: string
  *           format: password
- *           example: strongPassword123
+ *           example: motDePasseFort123
+ *         admin:
+ *           type: boolean
+ *           default: false
+ *           example: false
+ * 
  *     LoginInput:
  *       type: object
  *       required:
@@ -84,9 +101,9 @@ module.exports = router;
  *         email:
  *           type: string
  *           format: email
- *           example: user@example.com
+ *           example: utilisateur@exemple.com
  *         password:
  *           type: string
  *           format: password
- *           example: strongPassword123
+ *           example: motDePasseFort123
  */

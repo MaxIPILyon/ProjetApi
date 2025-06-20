@@ -5,24 +5,24 @@ const options = {
   definition: {
     openapi: '3.0.0', // Spécifier la version de l'OpenAPI
     info: {
-      title: 'Your API Name',
+      title: 'ConfigurateurPC.API',
       version: '1.0.0',
-      description: 'Documentation pour votre API Express Node.js avec MongoDB et JWTAAdapter à l URL de base de votre API',
+      description: 'Documentation ConfigurateurPC.API',
       contact: {
-        name: 'Your Name or Team',
-        email: 'your.email@example.com',
+        name: 'Team JMM',
+        email: 'jmm.team@example.com',
       },
     },
     servers: [
       {
         url: 'http://localhost:8090/api', // Ajustez l'URL de base de votre API
-        description: 'Development server',
+        description: 'Server API',
       },
       // Vous pouvez ajouter d'autres URL de serveurs pour la mise à l'essai, la production, etc.
     ],
     components: {
         securitySchemes: {
-          bearerAuth: { // This defines a security scheme for JWT
+          bearerAuth: { // Il définit un schéma de sécurité pour les JWT
             type: 'http',
             scheme: 'bearer',
             bearerFormat: 'JWT',

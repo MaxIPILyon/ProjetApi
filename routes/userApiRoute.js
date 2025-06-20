@@ -14,34 +14,34 @@ module.exports = router;
 /**
  * @swagger
  * tags:
- *   name: Users
- *   description: API endpoints for managing users
+ *   name: Utilisateurs
+ *   description: Points d'entrée de l'API pour la gestion des utilisateurs
  */
 
 /**
  * @swagger
  * /api/users:
  *   get:
- *     summary: Retrieve a list of all users.
- *     tags: [Users]
+ *     summary: Récupérer la liste de tous les utilisateurs.
+ *     tags: [Utilisateurs]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: A successful response with a list of users.
+ *         description: Liste des utilisateurs récupérée avec succès.
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/User'
+ *                 $ref: '#/components/schemas/Utilisateur'
  *       401:
- *         description: Unauthorized - No token provided or token is invalid.
+ *         description: Non autorisé - Token manquant ou invalide.
  *       500:
- *         description: Internal server error.
+ *         description: Erreur interne du serveur.
  *   post:
- *     summary: Create a new user.
- *     tags: [Users]
+ *     summary: Créer un nouvel utilisateur.
+ *     tags: [Utilisateurs]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -49,28 +49,28 @@ module.exports = router;
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UserInput'
+ *             $ref: '#/components/schemas/UtilisateurInput'
  *     responses:
  *       201:
- *         description: User created successfully.
+ *         description: Utilisateur créé avec succès.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               $ref: '#/components/schemas/Utilisateur'
  *       400:
- *         description: Bad request - invalid input.
+ *         description: Requête invalide.
  *       401:
- *         description: Unauthorized.
+ *         description: Non autorisé.
  *       500:
- *         description: Internal server error.
+ *         description: Erreur interne du serveur.
  */
 
 /**
  * @swagger
  * /api/users/{id}:
  *   get:
- *     summary: Retrieve a user by ID.
- *     tags: [Users]
+ *     summary: Récupérer un utilisateur par son ID.
+ *     tags: [Utilisateurs]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -79,23 +79,23 @@ module.exports = router;
  *         schema:
  *           type: string
  *         required: true
- *         description: User ID.
+ *         description: ID de l'utilisateur.
  *     responses:
  *       200:
- *         description: A user object.
+ *         description: Utilisateur trouvé.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               $ref: '#/components/schemas/Utilisateur'
  *       401:
- *         description: Unauthorized.
+ *         description: Non autorisé.
  *       404:
- *         description: User not found.
+ *         description: Utilisateur non trouvé.
  *       500:
- *         description: Internal server error.
+ *         description: Erreur interne du serveur.
  *   put:
- *     summary: Update a user by ID.
- *     tags: [Users]
+ *     summary: Mettre à jour un utilisateur par son ID.
+ *     tags: [Utilisateurs]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -104,31 +104,31 @@ module.exports = router;
  *         schema:
  *           type: string
  *         required: true
- *         description: User ID.
+ *         description: ID de l'utilisateur.
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UserInput'
+ *             $ref: '#/components/schemas/UtilisateurInput'
  *     responses:
  *       200:
- *         description: User updated successfully.
+ *         description: Utilisateur mis à jour avec succès.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               $ref: '#/components/schemas/Utilisateur'
  *       400:
- *         description: Bad request - invalid input.
+ *         description: Requête invalide.
  *       401:
- *         description: Unauthorized.
+ *         description: Non autorisé.
  *       404:
- *         description: User not found.
+ *         description: Utilisateur non trouvé.
  *       500:
- *         description: Internal server error.
+ *         description: Erreur interne du serveur.
  *   delete:
- *     summary: Delete a user by ID.
- *     tags: [Users]
+ *     summary: Supprimer un utilisateur par son ID.
+ *     tags: [Utilisateurs]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -137,64 +137,88 @@ module.exports = router;
  *         schema:
  *           type: string
  *         required: true
- *         description: User ID.
+ *         description: ID de l'utilisateur.
  *     responses:
  *       204:
- *         description: User deleted successfully.
+ *         description: Utilisateur supprimé avec succès.
  *       401:
- *         description: Unauthorized.
+ *         description: Non autorisé.
  *       404:
- *         description: User not found.
+ *         description: Utilisateur non trouvé.
  *       500:
- *         description: Internal server error.
+ *         description: Erreur interne du serveur.
  */
 
 /**
  * @swagger
  * components:
  *   schemas:
- *     User:
+ *     Utilisateur:
  *       type: object
  *       required:
  *         - id
  *         - username
  *         - email
+ *         - firstName
+ *         - lastName
+ *         - admin
  *       properties:
  *         id:
  *           type: string
  *           format: uuid
- *           description: Unique identifier for the user
- *         username:
+ *           description: Identifiant unique de l'utilisateur
+ *         firstName:
  *           type: string
- *           description: Username of the user
+ *           description: Prénom de l'utilisateur
+ *         lastName:
+ *           type: string
+ *           description: Nom de famille de l'utilisateur
  *         email:
  *           type: string
  *           format: email
- *           description: Email address of the user
+ *           description: Adresse email de l'utilisateur
+ *         username:
+ *           type: string
+ *           description: Nom d'utilisateur
+ *         admin:
+ *           type: boolean
+ *           description: Indique si l'utilisateur est administrateur
  *         createdAt:
  *           type: string
  *           format: date-time
- *           description: Date the user was created
+ *           description: Date de création
  *         updatedAt:
  *           type: string
  *           format: date-time
- *           description: Date the user was last updated
- *     UserInput:
+ *           description: Date de dernière modification
+ *     UtilisateurInput:
  *       type: object
  *       required:
  *         - username
  *         - email
  *         - password
+ *         - firstName
+ *         - lastName
  *       properties:
- *         username:
+ *         firstName:
  *           type: string
- *           description: Username for the new user
+ *           description: Prénom du nouvel utilisateur
+ *         lastName:
+ *           type: string
+ *           description: Nom de famille du nouvel utilisateur
  *         email:
  *           type: string
  *           format: email
- *           description: Email address for the new user
+ *           description: Adresse email du nouvel utilisateur
+ *         username:
+ *           type: string
+ *           description: Nom d'utilisateur du nouvel utilisateur
  *         password:
  *           type: string
  *           format: password
- *           description: Password for the new user
+ *           description: Mot de passe du nouvel utilisateur
+ *         admin:
+ *           type: boolean
+ *           description: Statut administrateur (optionnel, par défaut false)
  */
+

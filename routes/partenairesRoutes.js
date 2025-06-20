@@ -38,7 +38,6 @@ module.exports = router;
  *                 $ref: '#/components/schemas/Partenaire'
  *       500:
  *         description: Erreur serveur
- *
  *   post:
  *     summary: Créer un nouveau partenaire
  *     tags: [Partenaires]
@@ -53,12 +52,8 @@ module.exports = router;
  *     responses:
  *       201:
  *         description: Partenaire créé avec succès
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Partenaire'
  *       401:
- *         description: Non autorisé - Token manquant ou invalide
+ *         description: Non autorisé
  *       500:
  *         description: Erreur serveur
  */
@@ -67,7 +62,7 @@ module.exports = router;
  * @swagger
  * /api/partenaires/{id}:
  *   put:
- *     summary: Mettre à jour un partenaire existant
+ *     summary: Mettre à jour un partenaire
  *     tags: [Partenaires]
  *     security:
  *       - bearerAuth: []
@@ -77,7 +72,6 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: ID du partenaire à mettre à jour
  *     requestBody:
  *       required: true
  *       content:
@@ -87,13 +81,10 @@ module.exports = router;
  *     responses:
  *       200:
  *         description: Partenaire mis à jour avec succès
- *       401:
- *         description: Non autorisé
  *       404:
  *         description: Partenaire non trouvé
  *       500:
  *         description: Erreur serveur
- *
  *   delete:
  *     summary: Supprimer un partenaire
  *     tags: [Partenaires]
@@ -105,12 +96,9 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: ID du partenaire à supprimer
  *     responses:
  *       200:
  *         description: Partenaire supprimé avec succès
- *       401:
- *         description: Non autorisé
  *       404:
  *         description: Partenaire non trouvé
  *       500:
@@ -124,26 +112,33 @@ module.exports = router;
  *     Partenaire:
  *       type: object
  *       required:
- *         - nom
- *         - description
+ *         - nomDuSite
+ *         - url
+ *         - idSynchronisation
+ *         - conditionsAffiliation
  *       properties:
  *         id:
  *           type: string
- *           description: Identifiant unique du partenaire
- *         nom:
+ *           description: ID du partenaire
+ *         nomDuSite:
  *           type: string
- *           description: Nom du partenaire
- *         description:
- *           type: string
- *           description: Description du partenaire
- *         logo:
+ *           description: Nom du site partenaire
+ *         url:
  *           type: string
  *           format: uri
- *           description: URL du logo du partenaire
+ *           description: URL du site partenaire
+ *         idSynchronisation:
+ *           type: string
+ *           description: Identifiant de synchronisation unique
+ *         conditionsAffiliation:
+ *           type: string
+ *           description: Conditions d'affiliation du partenaire
  *       example:
- *         id: "123abc"
- *         nom: "Partenaire XYZ"
- *         description: "Entreprise partenaire spécialisée en..."
- *         logo: "https://exemple.com/logo.png"
+ *         id: "60f6c0e2e13e4f001e3e7c8c"
+ *         nomDuSite: "Partenaire XYZ"
+ *         url: "https://partenairexyz.com"
+ *         idSynchronisation: "sync_001"
+ *         conditionsAffiliation: "10% de commission sur chaque vente"
  */
+
 
