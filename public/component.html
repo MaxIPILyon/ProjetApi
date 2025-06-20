@@ -74,12 +74,8 @@
 
   <div id="message"></div>
 
-<label for="filterCategory">Filtrer par catégorie :</label>
-<select id="filterCategory">
-  <option value="">-- Toutes les catégories --</option>
-</select>
-
-
+  
+  
   <form id="form">
     <input type="text" id="name" placeholder="Nom du composant" required />
     <input type="text" id="brand" placeholder="Marque" required />
@@ -90,6 +86,19 @@
     <input type="hidden" id="componentId" />
     <button type="submit">Ajouter / Modifier</button>
   </form>
+  
+<div style="display: flex; gap: 10px; margin-bottom: 20px;">
+  <select id="filterCategory" style="flex: 1;">
+    <option value="">-- Toutes les catégories --</option>
+  </select>
+  <input type="text" id="filterBrand" placeholder="Filtrer par marque..." style="flex: 1; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+</div>
+
+
+<div style="margin-bottom: 20px;">
+  <input type="text" id="filterBrand" placeholder="Filtrer par marque..." style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+</div>
+
 
   <ul id="list"></ul>
 
@@ -102,6 +111,8 @@
     const categorySelect = document.getElementById('category');
     const componentIdInput = document.getElementById('componentId');
     const message = document.getElementById('message');
+    const filterBrand = document.getElementById('filterBrand');
+
 
     function showMessage(text, type = 'success') {
       message.style.color = type === 'success' ? 'green' : 'red';
@@ -148,6 +159,7 @@ async function loadComponents() {
 
   const categoriesRes = await authFetch('/api/categories');
   const categoriesData = await categoriesRes.json();
+  const brandFilter = filterBrand.value.trim().toLowerCase();
 
   if (!categoriesRes.ok) {
     showMessage("Erreur de chargement des catégories", "error");
@@ -179,17 +191,20 @@ async function loadComponents() {
     if (compData.data.length === 0) {
       ul.innerHTML = '<li>Aucun composant dans cette catégorie.</li>';
     } else {
-      compData.data.forEach(c => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <span><strong>${c.title}</strong> (${c.brand}) - ${c.price}€</span>
-          <div class="actions">
-            <button onclick='edit(${JSON.stringify(c)})'>Modifier</button>
-            <button class="delete" onclick="remove('${c._id}')">Supprimer</button>
-          </div>
-        `;
-        ul.appendChild(li);
-      });
+      compData.data
+        .filter(c => !brandFilter || c.brand.toLowerCase().includes(brandFilter))
+        .forEach(c => {
+          const li = document.createElement('li');
+          li.innerHTML = `
+      <span><strong>${c.title}</strong> (${c.brand}) - ${c.price}€</span>
+      <div class="actions">
+        <button onclick='edit(${JSON.stringify(c)})'>Modifier</button>
+        <button class="delete" onclick="remove('${c._id}')">Supprimer</button>
+      </div>
+    `;
+          ul.appendChild(li);
+        });
+
     }
 
     list.appendChild(div);
@@ -257,6 +272,8 @@ async function loadComponents() {
       }
     });
     filterCategory.addEventListener('change', loadComponents);
+    filterBrand.addEventListener('input', loadComponents);
+
     loadCategories();
     loadComponents();
   </script>
