@@ -31,4 +31,14 @@ Ce projet est une API REST développée avec **Node.js** et **Express.js** dans 
    ```
    node app.js
    ```
-   
+5. Accéder au client web
+   ```
+   http://localhost:8090
+   ```
+
+## 📄 Documentation
+
+accès à la doc
+```
+http://localhost:8090/api-docs
+```
