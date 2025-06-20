@@ -1,67 +1,120 @@
-require('dotenv').config({ path: '.env.test' });
 const request = require('supertest');
 const mongoose = require('mongoose');
-const app = require('../app');
-const Category = require('../models/category');
-const User = require('../models/user'); // si l'utilisateur est nécessaire pour obtenir un JWT
+const { MongoMemoryServer } = require('mongodb-memory-server');
 const jwt = require('jsonwebtoken');
 
-let token;
+const app = require('../app'); // Ton app Express
+const Category = require('../models/category');
 
-beforeAll(async () => {
-  // Connexion à la base de données de test
-  await mongoose.connect(process.env.MONGO_URL_TEST);
+// Clé secrète JWT utilisée dans ton middleware d'auth
+const JWT_SECRET = 'testsecret';
 
-  // Créer un utilisateur fictif et générer un JWT
-  const user = new User({ email: 'admin@test.com', password: 'password' });
-  await user.save();
+// Génère un token admin pour tests
+function generateAdminToken() {
+  return jwt.sign({ userId: 'testuser', role: 'admin' }, JWT_SECRET, { expiresIn: '1h' });
+}
 
-  token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, {
-    expiresIn: '1h',
-  });
-});
+// Génère un token utilisateur non admin
+function generateUserToken() {
+  return jwt.sign({ userId: 'testuser', role: 'user' }, JWT_SECRET, { expiresIn: '1h' });
+}
 
-afterAll(async () => {
-  await mongoose.connection.close();
-});
+describe('Category API', () => {
+  let mongoServer;
 
-afterEach(async () => {
-  await Category.deleteMany();
-});
+  beforeAll(async () => {
+    mongoServer = await MongoMemoryServer.create();
+    const uri = mongoServer.getUri();
 
-describe('GET /categories', () => {
-  it('devrait retourner une liste vide de catégories', async () => {
-    const res = await request(app).get('/categories');
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toEqual([]);
-  });
-});
-
-describe('POST /categories', () => {
-  it('devrait créer une catégorie avec un token valide', async () => {
-    const res = await request(app)
-      .post('/categories')
-      .set('Authorization', `Bearer ${token}`)
-      .send({ name: 'Informatique' });
-
-    expect(res.statusCode).toBe(201);
-    expect(res.body.name).toBe('Informatique');
+    await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
   });
 
-  it('devrait refuser la création sans token', async () => {
-    const res = await request(app).post('/categories').send({ name: 'Musique' });
-
-    expect(res.statusCode).toBe(401); // ou 403 selon ton middleware
+  afterAll(async () => {
+    await mongoose.disconnect();
+    await mongoServer.stop();
   });
 
-  it('devrait refuser un nom de catégorie déjà existant', async () => {
-    await Category.create({ name: 'Sport' });
+  afterEach(async () => {
+    // Clean db after each test
+    await Category.deleteMany();
+  });
 
-    const res = await request(app)
-      .post('/categories')
-      .set('Authorization', `Bearer ${token}`)
-      .send({ name: 'Sport' });
+  describe('GET /categories', () => {
+    it('should return empty array if no categories', async () => {
+      const res = await request(app).get('/categories');
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual([]);
+    });
 
-    expect(res.statusCode).toBe(400); // ou autre selon ta gestion d’erreur
+    it('should return categories list', async () => {
+      await Category.create({ name: 'Tech' });
+      await Category.create({ name: 'Food' });
+
+      const res = await request(app).get('/categories');
+      expect(res.statusCode).toBe(200);
+      expect(res.body.length).toBe(2);
+      expect(res.body.map(c => c.name)).toEqual(expect.arrayContaining(['Tech', 'Food']));
+    });
+  });
+
+  describe('POST /categories', () => {
+    it('should create category if user is admin', async () => {
+      const token = generateAdminToken();
+
+      const res = await request(app)
+        .post('/categories')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ name: 'Sports' });
+
+      expect(res.statusCode).toBe(201);
+      expect(res.body.name).toBe('Sports');
+
+      // Verify saved in DB
+      const cat = await Category.findOne({ name: 'Sports' });
+      expect(cat).not.toBeNull();
+    });
+
+    it('should fail with 401 if no token', async () => {
+      const res = await request(app)
+        .post('/categories')
+        .send({ name: 'Music' });
+
+      expect(res.statusCode).toBe(401);
+    });
+
+    it('should fail with 403 if user is not admin', async () => {
+      const token = generateUserToken();
+
+      const res = await request(app)
+        .post('/categories')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ name: 'Music' });
+
+      expect(res.statusCode).toBe(403);
+    });
+
+    it('should fail with 400 if name missing', async () => {
+      const token = generateAdminToken();
+
+      const res = await request(app)
+        .post('/categories')
+        .set('Authorization', `Bearer ${token}`)
+        .send({});
+
+      expect(res.statusCode).toBe(400);
+    });
+
+    it('should fail if category name already exists', async () => {
+      const token = generateAdminToken();
+
+      await Category.create({ name: 'Travel' });
+
+      const res = await request(app)
+        .post('/categories')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ name: 'Travel' });
+
+      expect(res.statusCode).toBe(400);
+    });
   });
 });
