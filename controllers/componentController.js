@@ -22,6 +22,16 @@ module.exports.getComponentsByCategory = async (req, res) => {
     }
 };
 
+module.exports.getComponents = async (req, res) => {
+    try {
+        let component = await componentService.getComponents();
+        return res.status(200).json({ status: 200, data: component, message: "Successfully Component Retrieved" });
+    }
+    catch (e) {
+        return res.status(400).json({ status: 400, message: e.message });
+    }
+};
+
 module.exports.getComponentById = async (req, res) => {
     try {
         let component = await componentService.getComponentById({ _id: req.params.id });

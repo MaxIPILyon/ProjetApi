@@ -8,6 +8,7 @@ router.get('/categories', componentController.getCategories);
 router.get('/categories/:id/components', componentController.getComponentsByCategory);
 
 // Composants
+router.get('/components', componentController.getComponents);
 router.get('/components/:id', componentController.getComponentById);
 
 // Admin uniquement pour ces routes

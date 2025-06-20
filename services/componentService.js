@@ -1,5 +1,14 @@
 const Component = require('../models/component');
 
+module.exports.getComponents = async (query) => {
+    try {
+        let components = await Component.find()
+        return components;
+    } catch (e) {
+        throw Error('Error while query one Component: ' + e);
+    }
+};
+
 module.exports.getComponentById = async (query) => {
     try {
         let component = await Component.findOne(query).populate('category');

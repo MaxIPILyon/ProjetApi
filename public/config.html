@@ -77,11 +77,32 @@
       background-color: #e74c3c;
       color: white;
     }
+
+    .add-button button {
+      background-color: #2ecc71;
+      border: none;
+      padding: 10px 20px;
+      color: white;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .add-button button:hover {
+      background-color: #27ae60;
+    }
   </style>
 </head>
 <body>
   <h1>🖥️ Configurations PC</h1>
   <div id="configurations"></div>
+
+    <div class="add-button">
+    <a href="createConfig.html">
+      <button>➕ Créer une configuration</button>
+    </a>
+  </div>
+
 
   <script>
     function getCookie(name) {
