@@ -10,7 +10,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /api/auth/register:
+ * /auth/register:
  *   post:
  *     summary: Enregistrer un nouvel utilisateur.
  *     tags: [Authentification]
@@ -31,7 +31,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /api/auth/login:
+ * /auth/login:
  *   post:
  *     summary: Authentifier un utilisateur et retourner un jeton.
  *     tags: [Authentification]
@@ -95,13 +95,12 @@ module.exports = router;
  *     LoginInput:
  *       type: object
  *       required:
- *         - email
+ *         - username
  *         - password
  *       properties:
- *         email:
+ *         username:
  *           type: string
- *           format: email
- *           example: utilisateur@exemple.com
+ *           example: marius
  *         password:
  *           type: string
  *           format: password
