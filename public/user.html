@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8" />
   <title>Gestion des Utilisateurs</title>
@@ -87,6 +88,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <h1>Gestion des Utilisateurs</h1>
@@ -98,14 +100,19 @@
     <input type="text" id="lastName" placeholder="Nom" required />
     <input type="email" id="email" placeholder="Email" required />
     <input type="password" id="password" placeholder="Mot de passe" required />
+    <label style="grid-column: span 2;">
+      <input type="checkbox" id="isAdmin" />
+      Administrateur
+    </label>
     <input type="hidden" id="userId" />
     <button type="submit">Ajouter / Modifier</button>
+
   </form>
 
-<div style="display: flex; gap: 10px; margin-bottom: 20px;">
-  <input type="text" id="filterName" placeholder="Filtrer par nom ou prénom" style="flex: 1;" />
-  <input type="text" id="filterEmail" placeholder="Filtrer par email" style="flex: 1;" />
-</div>
+  <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+    <input type="text" id="filterName" placeholder="Filtrer par nom ou prénom" style="flex: 1;" />
+    <input type="text" id="filterEmail" placeholder="Filtrer par email" style="flex: 1;" />
+  </div>
 
 
   <ul id="userList"></ul>
@@ -121,6 +128,8 @@
     const message = document.getElementById("message");
     const filterName = document.getElementById("filterName");
     const filterEmail = document.getElementById("filterEmail");
+    const isAdmin = document.getElementById("isAdmin");
+
 
 
     const API_URL = "/api/user";
@@ -131,41 +140,46 @@
       setTimeout(() => message.textContent = '', 3000);
     }
 
-async function fetchUsers() {
-  const res = await fetch(`${API_URL}/users`);
-  const data = await res.json();
+    async function fetchUsers() {
+      const res = await fetch(`${API_URL}/users`);
+      const data = await res.json();
 
-  if (res.ok) {
-    const nameFilter = filterName.value.trim().toLowerCase();
-    const emailFilter = filterEmail.value.trim().toLowerCase();
+      if (res.ok) {
+        const nameFilter = filterName.value.trim().toLowerCase();
+        const emailFilter = filterEmail.value.trim().toLowerCase();
 
-    userList.innerHTML = "";
+        userList.innerHTML = "";
 
-    data.data
-      .filter(user => {
-        const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
-        const email = user.email.toLowerCase();
+        data.data
+          .filter(user => {
+            const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
+            const email = user.email.toLowerCase();
 
-        return (
-          (!nameFilter || fullName.includes(nameFilter)) &&
-          (!emailFilter || email.includes(emailFilter))
-        );
-      })
-      .forEach(user => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <span><strong>${user.firstName} ${user.lastName}</strong> — ${user.email}</span>
+            return (
+              (!nameFilter || fullName.includes(nameFilter)) &&
+              (!emailFilter || email.includes(emailFilter))
+            );
+          })
+          .forEach(user => {
+            const li = document.createElement("li");
+            li.innerHTML = `
+          <span>
+  <strong>${user.firstName} ${user.lastName}</strong>
+  — ${user.email}
+  ${user.admin ? "<span style='color: green;'>(Admin)</span>" : ""}
+</span>
+
           <div class="actions">
             <button class="edit" onclick='editUser(${JSON.stringify(user)})'>✏️</button>
             <button class="delete" onclick='deleteUser("${user._id}")'>🗑️</button>
           </div>
         `;
-        userList.appendChild(li);
-      });
-  } else {
-    showMessage("Erreur de chargement", "error");
-  }
-}
+            userList.appendChild(li);
+          });
+      } else {
+        showMessage("Erreur de chargement", "error");
+      }
+    }
 
 
     form.addEventListener("submit", async (e) => {
@@ -175,7 +189,8 @@ async function fetchUsers() {
         firstName: firstName.value,
         lastName: lastName.value,
         email: email.value,
-        password: password.value
+        password: password.value,
+        admin: isAdmin.checked
       };
 
       const id = userId.value;
@@ -212,6 +227,8 @@ async function fetchUsers() {
       lastName.value = user.lastName;
       email.value = user.email;
       password.value = "";
+      isAdmin.checked = user.admin || false;
+
     }
 
     async function deleteUser(id) {
@@ -239,4 +256,5 @@ async function fetchUsers() {
   </script>
 
 </body>
+
 </html>
