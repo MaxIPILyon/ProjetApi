@@ -15,7 +15,7 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:8090/api', // Ajustez l'URL de base de votre API
+        url: 'http://localhost:8090', // Ajustez l'URL de base de votre API
         description: 'Server API',
       },
       // Vous pouvez ajouter d'autres URL de serveurs pour la mise à l'essai, la production, etc.
