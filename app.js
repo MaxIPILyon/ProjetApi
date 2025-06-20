@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const mongoose = require('mongoose');
 const fs = require('fs'); // fileSystem
+const path = require('path');
 
 // Class model
 const User = require("./models/user");
@@ -10,12 +11,14 @@ const Category = require("./models/category");
 
 // const userApiService = require('./services/userApiService');
 const userService = require("./services/userService");
+
 const userApiRoute = require("./routes/userApiRoute");
 const userAuthRoutes = require("./routes/userAuthRoutes");
 const partenairesRoutes = require('./routes/partenairesRoutes');
 const componentRoutes = require('./routes/componentRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const configRoutes = require('./routes/configRoutes');
+
 const cors = require('cors');
 const verifyToken = require('./middlewares/authMiddlewares');
 
@@ -23,7 +26,6 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swaggerConf'); // Chemin d'accès au fichier de définition de swagger
 
 
-const path = require('path');
 
 const app = express();
 
@@ -32,6 +34,7 @@ const PORT = process.env.PORT || 8090;
 //charge le fichier de configuration
 dotenv.config();
 
+//Connexion à la BDD
 mongoose.connect(process.env.MONGO_CONNECTION)
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch((e) => console.log('Connexion à MongoDB échouée !' + e));
@@ -74,6 +77,7 @@ Category.countDocuments()
   .catch(err => console.error('Erreur countDocuments :', err));
 
 
+  // Démarrage du serveur
 app.listen(8090, () => {
   console.log('Le serveur est démarré sur le port 8090 !');
   console.log(`La documentation de l'API est disponible à l'adresse suivante http://localhost:${PORT}/api-docs`);
