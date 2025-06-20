@@ -7,7 +7,7 @@ const {authenticateToken, isAdmin} = require('../middlewares/authMiddlewares');
 router.get('/categories', categoryController.getCategories);
 
 // Admin uniquement
-router.post('/categories', authenticateToken, categoryController.createCategory);
+router.post('/categories', authenticateToken, isAdmin, categoryController.createCategory);
 
 module.exports = router;
 

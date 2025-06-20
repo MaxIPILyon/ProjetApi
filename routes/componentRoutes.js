@@ -12,9 +12,9 @@ router.get('/components', componentController.getComponents);
 router.get('/components/:id', componentController.getComponentById);
 
 // Admin uniquement pour ces routes
-router.post('/components', authenticateToken, componentController.createComponent);
-router.put('/components/:id', authenticateToken, componentController.updateComponent);
-router.delete('/components/:id', authenticateToken, componentController.deleteComponent);
+router.post('/components', authenticateToken, isAdmin, componentController.createComponent);
+router.put('/components/:id', authenticateToken, isAdmin, componentController.updateComponent);
+router.delete('/components/:id', authenticateToken, isAdmin, componentController.deleteComponent);
 
 module.exports = router;
 
