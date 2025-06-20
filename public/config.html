@@ -14,68 +14,12 @@
       margin: auto;
     }
 
-    h1 {
-      text-align: center;
+h1 {
       margin-bottom: 20px;
     }
 
-    form {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    input[type="text"] {
-      flex: 1;
-      padding: 8px 12px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    button {
-      background-color: #3498db;
-      border: none;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background-color 0.3s;
-    }
-
-    button:hover {
-      background-color: #2980b9;
-    }
-
-    ul {
-      list-style: none;
-      padding-left: 0;
-    }
-
-    li {
-      background-color: white;
-      margin-bottom: 8px;
-      padding: 12px 15px;
-      border-radius: 5px;
-      box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
-    }
-
-    #message {
-      text-align: center;
-      margin-bottom: 20px;
-      padding: 10px;
-      border-radius: 5px;
-      display: none;
-    }
-
-    #message.success {
-      background-color: #2ecc71;
-      color: white;
-    }
-
-    #message.error {
-      background-color: #e74c3c;
-      color: white;
+    .add-button {
+      margin-bottom: 30px;
     }
 
     .add-button button {
@@ -91,18 +35,100 @@
     .add-button button:hover {
       background-color: #27ae60;
     }
+
+    .config {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00000033;
+      width: 500px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .config h2 {
+      margin: 0;
+      font-size: 18px;
+      padding: 15px;
+      background-color: rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .config h2 span {
+      font-size: 14px;
+      transition: transform 0.3s ease;
+    }
+
+    .config-content {
+      padding: 15px 30px;
+      display: none;
+      flex-direction: column;
+    }
+
+    .component {
+      margin-left: 20px;
+    }
+
+    .total {
+      font-weight: bold;
+      margin-top: 10px;
+      text-align: right;
+    }
+
+    .actions {
+      margin-top: 15px;
+      text-align: right;
+    }
+
+    .actions button {
+      margin-left: 10px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .edit-btn {
+      background-color: #f39c12;
+      color: white;
+    }
+
+    .edit-btn:hover {
+      background-color: #e67e22;
+    }
+
+    .delete-btn {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    .delete-btn:hover {
+      background-color: #c0392b;
+    }
+
+    .error {
+      background-color: #e74c3c;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      width: 500px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
   <h1>🖥️ Configurations PC</h1>
-  <div id="configurations"></div>
 
-    <div class="add-button">
-    <a href="createConfig.html">
+  <div class="add-button">
+    <a href="createConfiguration.html">
       <button>➕ Créer une configuration</button>
     </a>
   </div>
 
+  <div id="configurations"></div>
 
   <script>
     function getCookie(name) {
@@ -120,8 +146,21 @@
       return fetch(url, options);
     }
 
+    async function deleteConfiguration(id) {
+      if (!confirm("Êtes-vous sûr de vouloir supprimer cette configuration ?")) return;
+      const res = await authFetch(`/api/configurations/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        alert("Configuration supprimée.");
+        loadConfigurations();
+      } else {
+        alert("Erreur lors de la suppression.");
+      }
+    }
+
     async function loadConfigurations() {
       const container = document.getElementById('configurations');
+      container.innerHTML = '';
+
       const res = await authFetch('/api/configurations');
       const data = await res.json();
 
@@ -134,10 +173,24 @@
         const div = document.createElement('div');
         div.className = 'config';
 
+        const header = document.createElement('h2');
+        const toggleIcon = document.createElement('span');
+        toggleIcon.textContent = '▼';
+        header.innerHTML = `${cfg.name}`;
+        header.appendChild(toggleIcon);
+
+        const content = document.createElement('div');
+        content.className = 'config-content';
+
+        header.addEventListener('click', () => {
+          const isVisible = content.style.display === 'flex';
+          content.style.display = isVisible ? 'none' : 'flex';
+          toggleIcon.textContent = isVisible ? '▼' : '▲';
+        });
+
         const total = cfg.totalPrice.toFixed(2);
 
-        div.innerHTML = `
-          <h2>${cfg.name}</h2>
+        content.innerHTML = `
           <p><strong>Utilisateur :</strong> ${cfg.user.username}</p>
           <p><strong>Date :</strong> ${new Date(cfg.createdAt).toLocaleDateString()}</p>
           <p><strong>Composants :</strong></p>
@@ -145,8 +198,14 @@
             ${cfg.components.map(c => `<li class="component">${c.title} - ${c.price.toFixed(2)}€</li>`).join('')}
           </ul>
           <p class="total">💰 Total : ${total} €</p>
+          <div class="actions">
+            <button class="edit-btn" onclick="location.href='editConfig.html?id=${cfg._id}'">✏️ Modifier</button>
+            <button class="delete-btn" onclick="deleteConfiguration('${cfg._id}')">🗑️ Supprimer</button>
+          </div>
         `;
 
+        div.appendChild(header);
+        div.appendChild(content);
         container.appendChild(div);
       });
     }

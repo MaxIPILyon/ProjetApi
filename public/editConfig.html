@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Créer une configuration</title>
+  <title>Modifier une configuration</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -41,7 +41,7 @@
     }
 
     button {
-      background-color: #3498db;
+      background-color: #f39c12;
       color: white;
       border: none;
       padding: 10px;
@@ -51,7 +51,7 @@
     }
 
     button:hover {
-      background-color: #2980b9;
+      background-color: #e67e22;
     }
 
     .success {
@@ -76,19 +76,22 @@
   </style>
 </head>
 <body>
-  <h1>➕ Nouvelle Configuration</h1>
+  <h1>✏️ Modifier une Configuration</h1>
   <form id="configForm">
     <label for="name">Nom de la configuration :</label>
     <input type="text" id="name" required>
 
     <div id="component-groups"></div>
 
-    <button type="submit">Créer</button>
+    <button type="submit">Enregistrer les modifications</button>
   </form>
 
   <div id="message"></div>
 
   <script>
+    const params = new URLSearchParams(window.location.search);
+    const configId = params.get('id');
+
     function getCookie(name) {
       const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
       return match ? match[2] : null;
@@ -104,21 +107,31 @@
       return fetch(url, options);
     }
 
-    async function loadComponentsGroupedByCategory() {
+    async function loadComponentsAndConfig() {
       const container = document.getElementById('component-groups');
+      const nameInput = document.getElementById('name');
       container.innerHTML = '';
 
-      const resCat = await authFetch('/api/categories');
-      const catData = await resCat.json();
-      if (!resCat.ok) {
-        container.innerHTML = '<p>Erreur de chargement des catégories</p>';
+      const [catRes, configRes] = await Promise.all([
+        authFetch('/api/categories'),
+        authFetch(`/api/configurations/${configId}`)
+      ]);
+
+      const catData = await catRes.json();
+      const configData = await configRes.json();
+
+      if (!catRes.ok || !configRes.ok) {
+        container.innerHTML = '<p>Erreur de chargement</p>';
         return;
       }
 
+      nameInput.value = configData.data.name;
+      const selectedIds = configData.data.components.map(c => c._id);
+
       for (const cat of catData.data) {
-        const resComp = await authFetch(`/api/categories/${cat._id}/components`);
-        const compData = await resComp.json();
-        if (!resComp.ok || !Array.isArray(compData.data)) continue;
+        const compRes = await authFetch(`/api/categories/${cat._id}/components`);
+        const compData = await compRes.json();
+        if (!compRes.ok || !Array.isArray(compData.data)) continue;
 
         const section = document.createElement('div');
         section.className = 'component-group';
@@ -132,6 +145,7 @@
           const opt = document.createElement('option');
           opt.value = c._id;
           opt.textContent = `${c.title} - ${c.price.toFixed(2)}€`;
+          if (selectedIds.includes(c._id)) opt.selected = true;
           select.appendChild(opt);
         });
 
@@ -145,14 +159,14 @@
       const name = document.getElementById('name').value;
       const selected = Array.from(document.querySelectorAll('select[name="components"] option:checked')).map(opt => opt.value);
 
-      const res = await authFetch('/api/configurations', {
-        method: 'POST',
+      const res = await authFetch(`/api/configurations/${configId}`, {
+        method: 'PUT',
         body: JSON.stringify({ name, components: selected })
       });
 
       const msgDiv = document.getElementById('message');
       if (res.ok) {
-        msgDiv.innerHTML = '<div class="success">✅ Configuration créée avec succès ! Redirection...</div>';
+        msgDiv.innerHTML = '<div class="success">✅ Modifications enregistrées ! Redirection...</div>';
         setTimeout(() => {
           window.location.href = 'config.html';
         }, 1500);
@@ -162,7 +176,7 @@
       }
     });
 
-    loadComponentsGroupedByCategory();
+    loadComponentsAndConfig();
   </script>
 </body>
 </html>
