@@ -20,7 +20,7 @@ Ce projet est une API REST développée avec **Node.js** et **Express.js** dans 
 
 1. Cloner le dépôt :
    ```bash
-   git clone https://github.com/MaxIPILyon/ProjetAp
+   git clone https://github.com/MaxIPILyon/ProjetApi
    cd ProjetApi
    ```
 2. Installer les dépendances :
