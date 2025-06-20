@@ -32,7 +32,7 @@ module.exports.createUser = async (user) => {
     }
 }
 
-//update un users
+//mets à jour un users
 module.exports.updateUser = async (query, user) => {
     try {
         return await User.updateOne(query, user);
@@ -42,7 +42,7 @@ module.exports.updateUser = async (query, user) => {
     }
 }
 
-//update un users
+//Supprime un users
 module.exports.deleteUser = async (query) => {
     try {
         return await User.deleteOne(query);
