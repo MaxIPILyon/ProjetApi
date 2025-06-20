@@ -99,7 +99,7 @@
     <input type="text" id="firstName" placeholder="Prénom" required />
     <input type="text" id="lastName" placeholder="Nom" required />
     <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Mot de passe" required />
+    <input type="password" id="password" placeholder="Mot de passe" />
     <label style="grid-column: span 2;">
       <input type="checkbox" id="isAdmin" />
       Administrateur
@@ -189,9 +189,13 @@
         firstName: firstName.value,
         lastName: lastName.value,
         email: email.value,
-        password: password.value,
         admin: isAdmin.checked
       };
+
+      if (password.value) {
+        body.password = password.value;
+      }
+
 
       const id = userId.value;
       let res;
