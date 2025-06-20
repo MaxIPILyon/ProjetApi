@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Configurations PC</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
      body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -109,6 +110,15 @@ h1 {
       background-color: #c0392b;
     }
 
+    .pdf-btn {
+      background-color: #3498db;
+      color: white;
+    }
+
+    .pdf-btn:hover {
+      background-color: #2980b9;
+    }
+
     .error {
       background-color: #e74c3c;
       padding: 10px;
@@ -130,7 +140,9 @@ h1 {
 
   <div id="configurations"></div>
 
-  <script>
+ <script>
+    const { jsPDF } = window.jspdf;
+
     function getCookie(name) {
       const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
       return match ? match[2] : null;
@@ -155,6 +167,27 @@ h1 {
       } else {
         alert("Erreur lors de la suppression.");
       }
+    }
+
+    async function exportPDF(id) {
+      const res = await authFetch(`/api/configurations/${id}`);
+      const { data } = await res.json();
+
+      const doc = new jsPDF();
+      doc.setFontSize(14);
+      doc.text(`Configuration : ${data.name}`, 10, 20);
+      doc.text(`Utilisateur : ${data.user.username}`, 10, 30);
+      doc.text(`Date : ${new Date(data.createdAt).toLocaleDateString()}`, 10, 40);
+      doc.text(`Composants :`, 10, 50);
+
+      let y = 60;
+      data.components.forEach(c => {
+        doc.text(`- ${c.title} : ${c.price.toFixed(2)}€`, 15, y);
+        y += 10;
+      });
+
+      doc.text(`Total : ${data.components.reduce((sum, c) => sum + c.price, 0).toFixed(2)}€`, 10, y + 10);
+      doc.save(`${data.name}.pdf`);
     }
 
     async function loadConfigurations() {
@@ -199,6 +232,7 @@ h1 {
           </ul>
           <p class="total">💰 Total : ${total} €</p>
           <div class="actions">
+            <button class="pdf-btn" onclick="exportPDF('${cfg._id}')">📥 Exporter PDF</button>
             <button class="edit-btn" onclick="location.href='editConfig.html?id=${cfg._id}'">✏️ Modifier</button>
             <button class="delete-btn" onclick="deleteConfiguration('${cfg._id}')">🗑️ Supprimer</button>
           </div>
