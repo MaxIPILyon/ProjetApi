@@ -95,19 +95,20 @@
 
   <div id="message"></div>
 
-  <form id="form">
-    <input type="text" id="firstName" placeholder="Prénom" required />
-    <input type="text" id="lastName" placeholder="Nom" required />
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Mot de passe" />
-    <label style="grid-column: span 2;">
-      <input type="checkbox" id="isAdmin" />
-      Administrateur
-    </label>
-    <input type="hidden" id="userId" />
-    <button type="submit">Ajouter / Modifier</button>
+<form id="form">
+  <input type="text" id="firstName" placeholder="Prénom" required />
+  <input type="text" id="lastName" placeholder="Nom" required />
+  <input type="text" id="username" placeholder="Nom d'utilisateur" required />
+  <input type="email" id="email" placeholder="Email" required />
+  <input type="password" id="password" placeholder="Mot de passe" />
+  <label style="grid-column: span 2;">
+    <input type="checkbox" id="isAdmin" />
+    Administrateur
+  </label>
+  <input type="hidden" id="userId" />
+  <button type="submit">Ajouter / Modifier</button>
+</form>
 
-  </form>
 
   <div style="display: flex; gap: 10px; margin-bottom: 20px;">
     <input type="text" id="filterName" placeholder="Filtrer par nom ou prénom" style="flex: 1;" />
@@ -122,6 +123,7 @@
     const form = document.getElementById("form");
     const firstName = document.getElementById("firstName");
     const lastName = document.getElementById("lastName");
+    const username = document.getElementById("username");
     const email = document.getElementById("email");
     const password = document.getElementById("password");
     const userId = document.getElementById("userId");
@@ -129,6 +131,7 @@
     const filterName = document.getElementById("filterName");
     const filterEmail = document.getElementById("filterEmail");
     const isAdmin = document.getElementById("isAdmin");
+
 
 
 
@@ -188,6 +191,7 @@
       const body = {
         firstName: firstName.value,
         lastName: lastName.value,
+        username: username.value,
         email: email.value,
         admin: isAdmin.checked
       };
@@ -229,6 +233,7 @@
       userId.value = user._id;
       firstName.value = user.firstName;
       lastName.value = user.lastName;
+      username.value = user.username || "";
       email.value = user.email;
       password.value = "";
       isAdmin.checked = user.admin || false;
