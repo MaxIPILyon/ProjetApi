@@ -25,11 +25,12 @@ function authenticateToken (req, res, next) {
 
   try {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    //req.userId = decodedToken.userId;
-    req.user = {
-        userId: decodedToken.userId,
-        admin: decodedToken.admin
-    };
+    req.userId = decodedToken.userId;
+    req.admin = decodedToken.admin
+    // req.user = {
+    //     userId: decodedToken.userId,
+    //     admin: decodedToken.admin
+    // };
     next();
   } catch (e) {
     res.status(401).json({ error: 'Invalid token', details: e.message });
@@ -37,7 +38,7 @@ function authenticateToken (req, res, next) {
 }
 
 function isAdmin(req, res, next) {
-  if (!req.user || !req.user.admin) {
+  if (req.admin !== true) {
     return res.status(403).json({ error: 'Access denied: admin only' });
   }
   next();

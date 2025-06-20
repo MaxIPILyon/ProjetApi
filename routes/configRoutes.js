@@ -7,7 +7,7 @@ router.get('/configurations', configurationController.getConfigurations);
 router.get('/configurations/:id', configurationController.getConfiguration);
 router.post('/configurations', authenticateToken, configurationController.createConfiguration);
 router.put('/configurations/:id', authenticateToken, isAdmin,configurationController.updateConfiguration);
-router.delete('/configurations/:id', authenticateToken, isAdmin, configurationController.deleteConfiguration);
+router.delete('/configurations/:id', authenticateToken, isAdmin,configurationController.deleteConfiguration);
 
 module.exports = router;
 
