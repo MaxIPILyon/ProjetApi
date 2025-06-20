@@ -49,6 +49,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
     }
     .actions button {
       margin-left: 5px;
@@ -71,22 +72,24 @@
 <body>
 
   <h1>Gestion des Composants</h1>
+<div id="message"></div>
 
-  <div id="message"></div>
 
-  
-  
-  <form id="form">
-    <input type="text" id="name" placeholder="Nom du composant" required />
-    <input type="text" id="brand" placeholder="Marque" required />
-    <input type="text" id="price" placeholder="Prix (€)" required />
-    <select id="category" required>
-      <option value="">-- Choisir une catégorie --</option>
-    </select>
-    <input type="hidden" id="componentId" />
-    <button type="submit">Ajouter / Modifier</button>
-  </form>
-  
+
+<form id="form">
+  <input type="text" id="name" placeholder="Nom du composant" required />
+  <input type="text" id="specs" placeholder="Description technique" />
+  <input type="text" id="brand" placeholder="Marque" required />
+  <input type="text" id="imageUrl" placeholder="URL de l'image" />
+  <input type="text" id="price" placeholder="Prix (€)" required />
+  <select id="category" required>
+    <option value="">-- Choisir une catégorie --</option>
+  </select>
+  <input type="hidden" id="componentId" />
+  <button type="submit">Ajouter / Modifier</button>
+
+</form>
+
 <div style="display: flex; gap: 10px; margin-bottom: 20px;">
   <select id="filterCategory" style="flex: 1;">
     <option value="">-- Toutes les catégories --</option>
@@ -94,10 +97,6 @@
   <input type="text" id="filterBrand" placeholder="Filtrer par marque..." style="flex: 1; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
 </div>
 
-
-<div style="margin-bottom: 20px;">
-  <input type="text" id="filterBrand" placeholder="Filtrer par marque..." style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
-</div>
 
 
   <ul id="list"></ul>
@@ -108,6 +107,8 @@
     const nameInput = document.getElementById('name');
     const brandInput = document.getElementById('brand');
     const priceInput = document.getElementById('price');
+    const specsInput = document.getElementById('specs');
+    const imageUrlInput = document.getElementById('imageUrl');
     const categorySelect = document.getElementById('category');
     const componentIdInput = document.getElementById('componentId');
     const message = document.getElementById('message');
@@ -196,12 +197,17 @@ async function loadComponents() {
         .forEach(c => {
           const li = document.createElement('li');
           li.innerHTML = `
-      <span><strong>${c.title}</strong> (${c.brand}) - ${c.price}€</span>
-      <div class="actions">
-        <button onclick='edit(${JSON.stringify(c)})'>Modifier</button>
-        <button class="delete" onclick="remove('${c._id}')">Supprimer</button>
-      </div>
-    `;
+  <div style="flex: 1;">
+    <strong>${c.title}</strong> (${c.brand}) - ${c.price}€<br/>
+    <small>${c.specs || ''}</small>
+  </div>
+  ${c.imageUrl ? `<img src="${c.imageUrl}" alt="Image" style="height: 60px; border-radius: 4px; margin-left: 10px;">` : ''}
+  <div class="actions">
+    <button onclick='edit(${JSON.stringify(c)})'>Modifier</button>
+    <button class="delete" onclick="remove('${c._id}')">Supprimer</button>
+  </div>
+`;
+
           ul.appendChild(li);
         });
 
@@ -227,10 +233,13 @@ async function loadComponents() {
 
     function edit(c) {
       componentIdInput.value = c._id;
-      nameInput.value = c.name;
+      nameInput.value = c.title;
       brandInput.value = c.brand;
       priceInput.value = c.price;
       categorySelect.value = c.category;
+      specsInput.value = c.specs || '';
+      imageUrlInput.value = c.imageUrl || '';
+
     }
 
     form.addEventListener('submit', async (e) => {
@@ -240,7 +249,9 @@ async function loadComponents() {
         title: nameInput.value.trim(),
         brand: brandInput.value.trim(),
         price: parseFloat(priceInput.value.trim()),
-        category: categorySelect.value
+        category: categorySelect.value,
+        specs: specsInput.value.trim(),
+        imageUrl: imageUrlInput.value.trim()
       };
 
       const id = componentIdInput.value;
